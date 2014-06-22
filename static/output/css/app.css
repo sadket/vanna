@@ -406,5 +406,6 @@ table {
 }
 
 .heading {
+  text-align: center;
   color: red;
 }
