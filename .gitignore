@@ -19,7 +19,6 @@ node_modules/
 ## Environment normalisation:
 /.bundle
 /vendor/bundle
-
 /static/src
 
 # these should all be checked in to normalise the environment:
