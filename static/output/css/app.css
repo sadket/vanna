@@ -405,6 +405,11 @@ table {
     border-spacing: 0;
 }
 
+.container {
+  width: 1000px;
+  margin: 0 auto;
+  background-color: #95a4ad;
+}
 .heading {
   text-align: center;
   color: red;
