@@ -9605,405 +9605,1868 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 	define( "jquery", [], function () { return jQuery; } );
 }
 
-})( window );;(function ($) {
-  $.fn.extend({
-    leanModal: function (options) {
-      var defaults = {
-          top: 100,
-          overlay: 0.5,
-          closeButton: null
-        },
-        overlay = $('<div id="overlay"></div>'),
-        closeModal = function (modalID) {
-          $('#overlay').fadeOut(200);
-          $(modalID).css({ 'display' : 'none' });
-        };
+})( window );;
+/*
+ * bootstrap-filestyle
+ * http://dev.tudosobreweb.com.br/bootstrap-filestyle/
+ *
+ * Copyright (c) 2013 Markus Vinicius da Silva Lima
+ * Version 1.0.3
+ * Licensed under the MIT license.
+ */ (function($) {
+  "use strict";
 
-      $('BODY').append(overlay);
+  var Filestyle = function(element, options) {
+    this.options = options;
+    this.$elementFilestyle = [];
+    this.$element = $(element);
+  };
 
-      options =  $.extend(defaults, options);
+  Filestyle.prototype = {
+    clear: function() {
+      this.$element.val('');
+      this.$elementFilestyle.find(':text').val('');
+    },
 
-      return this.each(function () {
+    destroy: function() {
+      this.$element.removeAttr('style')
+        .removeData('filestyle')
+        .val('');
+      this.$elementFilestyle.remove();
+    },
 
-        var o = options;
+    icon: function(value) {
+      if (value === true) {
+        if (!this.options.icon) {
+          this.options.icon = true;
+          this.$elementFilestyle.find('label').prepend(this.htmlIcon());
+        }
+      } else if (value === false) {
+        if (this.options.icon) {
+          this.options.icon = false;
+          this.$elementFilestyle.find('i').remove();
+        }
+      } else {
+        return this.options.icon;
+      }
+    },
 
-        $(this).click(function (e) {
-          var modalID = $(this).attr('href'),
-            modalHeight = $(modalID).outerHeight(),
-            modalWidth = $(modalID).outerWidth();
+    input: function(value) {
+      if (value === true) {
+        if (!this.options.input) {
+          this.options.input = true;
+          this.$elementFilestyle.prepend(this.htmlInput());
 
-          $('#overlay').click(function () {
-            closeModal(modalID);
-          });
-          $(o.closeButton).click(function () {
-            closeModal(modalID);
-          });
-          // Esc key handle;
-          $(document).keyup(function (e) {
-            if (e.keyCode === 27) {
-              closeModal(modalID);
-            }
-          });
+          var content = '',
+            files = [];
+          if (this.$element[0].files === undefined) {
+            files[0] = {
+              'name': this.$element[0].value
+            };
+          } else {
+            files = this.$element[0].files;
+          }
 
-          $('#overlay').css({ 'display' : 'block', opacity : 0 });
-          $('#overlay').fadeTo(200, o.overlay);
+          for (var i = 0; i < files.length; i++) {
+            content += files[i].name.split("\\").pop() + ', ';
+          }
+          if (content !== '') {
+            this.$elementFilestyle.find(':text').val(content.replace(/\, $/g, ''));
+          }
+        }
+      } else if (value === false) {
+        if (this.options.input) {
+          this.options.input = false;
+          this.$elementFilestyle.find(':text').remove();
+        }
+      } else {
+        return this.options.input;
+      }
+    },
 
-          $(modalID).css({
-            display: 'block',
-            position: 'fixed',
-            opacity: 0,
-            zIndex: 9999,
-            top: (typeof o.top === 'string') ? o.top : o.top + 'px',
-            left: 50 + '%',
-            marginLeft: -(modalWidth / 2) + 'px',
-            marginTop: -(modalHeight / 2) + 'px'
-          });
+    buttonText: function(value) {
+      if (value !== undefined) {
+        this.options.buttonText = value;
+        this.$elementFilestyle.find('label span').html(this.options.buttonText);
+      } else {
+        return this.options.buttonText;
+      }
+    },
 
-          $(modalID).fadeTo(200, 1);
-
-          e.preventDefault();
+    classButton: function(value) {
+      if (value !== undefined) {
+        this.options.classButton = value;
+        this.$elementFilestyle.find('label').attr({
+          'class': this.options.classButton
         });
+        if (this.options.classButton.search(/btn-inverse|btn-primary|btn-danger|btn-warning|btn-success/i) !== -1) {
+          this.$elementFilestyle.find('label i').addClass('icon-white');
+        } else {
+          this.$elementFilestyle.find('label i').removeClass('icon-white');
+        }
+      } else {
+        return this.options.classButton;
+      }
+    },
+
+    classIcon: function(value) {
+      if (value !== undefined) {
+        this.options.classIcon = value;
+        if (this.options.classButton.search(/btn-inverse|btn-primary|btn-danger|btn-warning|btn-success/i) !== -1) {
+          this.$elementFilestyle.find('label').find('i').attr({
+            'class': 'icon-white ' + this.options.classIcon
+          });
+        } else {
+          this.$elementFilestyle.find('label').find('i').attr({
+            'class': this.options.classIcon
+          });
+        }
+      } else {
+        return this.options.classIcon;
+      }
+    },
+
+    classInput: function(value) {
+      if (value !== undefined) {
+        this.options.classInput = value;
+        this.$elementFilestyle.find(':text').addClass(this.options.classInput);
+      } else {
+        return this.options.classInput;
+      }
+    },
+
+    htmlIcon: function() {
+      if (this.options.icon) {
+        var colorIcon = '';
+        if (this.options.classButton.search(/btn-inverse|btn-primary|btn-danger|btn-warning|btn-success/i) !== -1) {
+          colorIcon = ' icon-white ';
+        }
+
+        return '<i class="' + colorIcon + this.options.classIcon + '"></i> ';
+      } else {
+        return '';
+      }
+    },
+
+    htmlInput: function() {
+      if (this.options.input) {
+        return '<input type="text" class="' + this.options.classInput + '" disabled> ';
+      } else {
+        return '';
+      }
+    },
+
+    constructor: function() {
+      var _self = this,
+        html = '',
+        id = this.$element.attr('id'),
+        files = [];
+
+      if (id === '' || !id) {
+        id = 'filestyle-' + $('.bootstrap-filestyle').length;
+        this.$element.attr({
+          'id': id
+        });
+      }
+
+      html = this.htmlInput() + '<label for="' + id + '" class="' + this.options.classButton + '">' + this.htmlIcon() + '<span>' + this.options.buttonText + '</span>' + '</label>';
+
+      this.$elementFilestyle = $('<div class="bootstrap-filestyle" style="display: inline;">' + html + '</div>');
+
+      var $label = this.$elementFilestyle.find('label');
+      var $labelFocusableContainer = $label.parent();
+
+      $labelFocusableContainer.attr('tabindex', "0")
+        .keypress(function(e) {
+          if (e.keyCode === 13 || e.charCode === 32) {
+            $label.click();
+          }
+        });
+
+      // hidding input file and add filestyle
+      this.$element.css({
+        'position': 'absolute',
+        'left': '-9999px'
+      })
+        .attr('tabindex', "-1")
+        .after(this.$elementFilestyle);
+
+      // Getting input file value
+      this.$element.change(function() {
+        var content = '';
+        if (this.files === undefined) {
+          files[0] = {
+            'name': this.value
+          };
+        } else {
+          files = this.files;
+        }
+
+        for (var i = 0; i < files.length; i++) {
+          content += files[i].name.split("\\").pop() + ', ';
+        }
+
+        if (content !== '') {
+          _self.$elementFilestyle.find(':text').val(content.replace(/\, $/g, ''));
+        }
       });
+
+      // Check if browser is Firefox
+      if (window.navigator.userAgent.search(/firefox/i) > -1) {
+        // Simulating choose file for firefox
+        this.$elementFilestyle.find('label').click(function() {
+          _self.$element.click();
+          return false;
+        });
+      }
     }
+  };
+
+  var old = $.fn.filestyle;
+
+  $.fn.filestyle = function(option, value) {
+    var get = '',
+      element = this.each(function() {
+        if ($(this).attr('type') === 'file') {
+          var $this = $(this),
+            data = $this.data('filestyle'),
+            options = $.extend({}, $.fn.filestyle.defaults, option, typeof option === 'object' && option);
+
+          if (!data) {
+            $this.data('filestyle', (data = new Filestyle(this, options)));
+            data.constructor();
+          }
+
+          if (typeof option === 'string') {
+            get = data[option](value);
+          }
+        }
+      });
+
+    if (typeof get !== undefined) {
+      return get;
+    } else {
+      return element;
+    }
+  };
+
+  $.fn.filestyle.defaults = {
+    'buttonText': 'Choose file',
+    'input': true,
+    'icon': true,
+    'classButton': 'btn',
+    'classInput': 'input-large',
+    'classIcon': 'icon-folder-open'
+  };
+
+  $.fn.filestyle.noConflict = function() {
+    $.fn.filestyle = old;
+    return this;
+  };
+
+  // Data attributes register
+  $('.filestyle').each(function() {
+    var $this = $(this),
+      options = {
+        'buttonText': $this.attr('data-buttonText'),
+        'input': $this.attr('data-input') === 'false' ? false : true,
+        'icon': $this.attr('data-icon') === 'false' ? false : true,
+        'classButton': $this.attr('data-classButton'),
+        'classInput': $this.attr('data-classInput'),
+        'classIcon': $this.attr('data-classIcon')
+      };
+
+    $this.filestyle(options);
   });
-}(jQuery));;/*
-	Masked Input plugin for jQuery
-	Copyright (c) 2007-2013 Josh Bush (digitalbush.com)
-	Licensed under the MIT license (http://digitalbush.com/projects/masked-input-plugin/#license)
-	Version: 1.3.1
-*/
-(function($) {
-	function getPasteEvent() {
-    var el = document.createElement('input'),
-        name = 'onpaste';
-    el.setAttribute(name, '');
-    return (typeof el[name] === 'function')?'paste':'input';             
-}
-
-var pasteEventName = getPasteEvent() + ".mask",
-	ua = navigator.userAgent,
-	iPhone = /iphone/i.test(ua),
-	android=/android/i.test(ua),
-	caretTimeoutId;
-
-$.mask = {
-	//Predefined character definitions
-	definitions: {
-		'9': "[0-9]",
-		'a': "[A-Za-z]",
-		'*': "[A-Za-z0-9]"
-	},
-	dataName: "rawMaskFn",
-	placeholder: '_',
-};
-
-$.fn.extend({
-	//Helper Function for Caret positioning
-	caret: function(begin, end) {
-		var range;
-
-		if (this.length === 0 || this.is(":hidden")) {
-			return;
+})(window.jQuery); ;/**
+ * @preserve jQuery DateTimePicker plugin v2.1.8
+ * @homepage http://xdsoft.net/jqplugins/datetimepicker/
+ * (c) 2014, Chupurnov Valeriy.
+ */
+(function( $ ) {
+	'use strict'
+	var default_options  = {
+		i18n:{
+			ru:{ // Russian
+				months:[
+					'Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'
+				],
+				dayOfWeek:[
+					"Вск", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"
+				]
+			},
+			en:{ // English
+				months: [
+					"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+				],
+				dayOfWeek: [
+					"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+				]
+			},
+			de:{ // German
+				months:[
+					'Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'
+				],
+				dayOfWeek:[
+					"So.", "Mo", "Di", "Mi", "Do", "Fr", "Sa."
+				]
+			},
+			nl:{ // Dutch
+				months:[
+					"januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"
+				],
+				dayOfWeek:[
+					"zo", "ma", "di", "wo", "do", "vr", "za"
+				]
+			},
+			tr:{ // Turkish
+				months:[
+					"Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+				],
+				dayOfWeek:[
+					"Paz", "Pts", "Sal", "Çar", "Per", "Cum", "Cts"
+				]
+			},
+			fr:{ //French
+				months:[
+			    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+				],
+				dayOfWeek:[
+					"Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"
+				]
+			},
+			es:{ // Spanish
+				months: [
+					"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+				],
+				dayOfWeek: [
+					"Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"
+				]
+			},
+			th:{ // Thai
+				months:[
+					'มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'
+				],
+				dayOfWeek:[
+					'อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'
+				]
+			},
+			pl:{ // Polish
+				months: [
+					"styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"
+				],
+				dayOfWeek: [
+					"nd", "pn", "wt", "śr", "cz", "pt", "sb"
+				]
+			},
+			pt:{ // Portuguese
+				months: [
+					"Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+				],
+				dayOfWeek: [
+					"Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"
+				]
+			},
+			ch:{ // Simplified Chinese
+				months: [
+					"一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"
+				],
+				dayOfWeek: [
+					"日", "一","二","三","四","五","六"
+				]
+			}
+		},
+		value:'',
+		lang:'en',
+		format:'Y/m/d H:i',
+		formatTime:'H:i',
+		formatDate:'Y/m/d',
+		step:60,
+		closeOnDateSelect:0,
+		closeOnWithoutClick:true,
+		timepicker:true,
+		datepicker:true,
+		minDate:false,
+		maxDate:false,
+		minTime:false,
+		maxTime:false,
+		allowTimes:[],
+		opened:false,
+		inline:false,
+		onSelectDate:function() {},
+		onSelectTime:function() {},
+		onChangeMonth:function() {},
+		onChangeDateTime:function() {},
+		onShow:function() {},
+		onClose:function() {},
+		onGenerate:function() {},
+		withoutCopyright:true,
+		inverseButton:false,
+		hours12:false,
+		next:	'xdsoft_next',
+		prev : 'xdsoft_prev',
+		dayOfWeekStart:0,
+		timeHeightInTimePicker:25,
+		timepickerScrollbar:true,
+		todayButton:true, // 2.1.0
+		defaultSelect:true, // 2.1.0
+		scrollMonth:true,
+		scrollTime:true,
+		scrollInput:true,
+		mask:false,
+		validateOnBlur:true,
+		allowBlank:false,
+		yearStart:1950,
+		yearEnd:2050,
+		style:'',
+		id:'',
+		roundTime:'round', // ceil, floor
+		className:'',
+		weekends	: 	[],
+		yearOffset:0
+	};
+	// fix for ie8
+	if ( !Array.prototype.indexOf ) {
+		Array.prototype.indexOf = function(obj, start) {
+			 for (var i = (start || 0), j = this.length; i < j; i++) {
+				 if (this[i] === obj) { return i; }
+			 }
+			 return -1;
 		}
-
-		if (typeof begin == 'number') {
-			end = (typeof end === 'number') ? end : begin;
-			return this.each(function() {
-				if (this.setSelectionRange) {
-					this.setSelectionRange(begin, end);
-				} else if (this.createTextRange) {
-					range = this.createTextRange();
-					range.collapse(true);
-					range.moveEnd('character', end);
-					range.moveStart('character', begin);
-					range.select();
-				}
-			});
-		} else {
-			if (this[0].setSelectionRange) {
-				begin = this[0].selectionStart;
-				end = this[0].selectionEnd;
-			} else if (document.selection && document.selection.createRange) {
-				range = document.selection.createRange();
-				begin = 0 - range.duplicate().moveStart('character', -100000);
-				end = begin + range.text.length;
-			}
-			return { begin: begin, end: end };
-		}
-	},
-	unmask: function() {
-		return this.trigger("unmask");
-	},
-	mask: function(mask, settings) {
-		var input,
-			defs,
-			tests,
-			partialPosition,
-			firstNonMaskPos,
-			len;
-
-		if (!mask && this.length > 0) {
-			input = $(this[0]);
-			return input.data($.mask.dataName)();
-		}
-		settings = $.extend({
-			placeholder: $.mask.placeholder, // Load default placeholder
-			completed: null
-		}, settings);
-
-
-		defs = $.mask.definitions;
-		tests = [];
-		partialPosition = len = mask.length;
-		firstNonMaskPos = null;
-
-		$.each(mask.split(""), function(i, c) {
-			if (c == '?') {
-				len--;
-				partialPosition = i;
-			} else if (defs[c]) {
-				tests.push(new RegExp(defs[c]));
-				if (firstNonMaskPos === null) {
-					firstNonMaskPos = tests.length - 1;
-				}
-			} else {
-				tests.push(null);
-			}
-		});
-
-		return this.trigger("unmask").each(function() {
-			var input = $(this),
-				buffer = $.map(
-				mask.split(""),
-				function(c, i) {
-					if (c != '?') {
-						return defs[c] ? settings.placeholder : c;
-					}
-				}),
-				focusText = input.val();
-
-			function seekNext(pos) {
-				while (++pos < len && !tests[pos]);
-				return pos;
-			}
-
-			function seekPrev(pos) {
-				while (--pos >= 0 && !tests[pos]);
-				return pos;
-			}
-
-			function shiftL(begin,end) {
-				var i,
-					j;
-
-				if (begin<0) {
-					return;
-				}
-
-				for (i = begin, j = seekNext(end); i < len; i++) {
-					if (tests[i]) {
-						if (j < len && tests[i].test(buffer[j])) {
-							buffer[i] = buffer[j];
-							buffer[j] = settings.placeholder;
-						} else {
-							break;
+	};
+	$.fn.xdsoftScroller = function( _percent ) {
+		return this.each(function() {
+			var timeboxparent = $(this);
+			if( !$(this).hasClass('xdsoft_scroller_box') ) {
+				var pointerEventToXY = function( e ) {
+						var out = {x:0, y:0};
+						if( e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel' ) {
+							var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+							out.x = touch.pageX;
+							out.y = touch.pageY;
+						}else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover'|| e.type=='mouseout' || e.type=='mouseenter' || e.type=='mouseleave') {
+							out.x = e.pageX;
+							out.y = e.pageY;
 						}
+						return out;
+					},
+					move = 0,
+					timebox = timeboxparent.children().eq(0),
+					parentHeight = timeboxparent[0].clientHeight,
+					height = timebox[0].offsetHeight,
+					scrollbar = $('<div class="xdsoft_scrollbar"></div>'),
+					scroller = $('<div class="xdsoft_scroller"></div>'),
+					maximumOffset = 100,
+					start = false;
 
-						j = seekNext(j);
-					}
-				}
-				writeBuffer();
-				input.caret(Math.max(firstNonMaskPos, begin));
-			}
+				scrollbar.append(scroller);
 
-			function shiftR(pos) {
-				var i,
-					c,
-					j,
-					t;
-
-				for (i = pos, c = settings.placeholder; i < len; i++) {
-					if (tests[i]) {
-						j = seekNext(i);
-						t = buffer[i];
-						buffer[i] = c;
-						if (j < len && tests[j].test(t)) {
-							c = t;
-						} else {
-							break;
-						}
-					}
-				}
-			}
-
-			function keydownEvent(e) {
-				var k = e.which,
-					pos,
-					begin,
-					end;
-
-				//backspace, delete, and escape get special treatment
-				if (k === 8 || k === 46 || (iPhone && k === 127)) {
-					pos = input.caret();
-					begin = pos.begin;
-					end = pos.end;
-
-					if (end - begin === 0) {
-						begin=k!==46?seekPrev(begin):(end=seekNext(begin-1));
-						end=k===46?seekNext(end):end;
-					}
-					clearBuffer(begin, end);
-					shiftL(begin, end - 1);
-
-					e.preventDefault();
-				} else if (k == 27) {//escape
-					input.val(focusText);
-					input.caret(0, checkVal());
-					e.preventDefault();
-				}
-			}
-
-			function keypressEvent(e) {
-				var k = e.which,
-					pos = input.caret(),
-					p,
-					c,
-					next;
-
-				if (e.ctrlKey || e.altKey || e.metaKey || k < 32) {//Ignore
-					return;
-				} else if (k) {
-					if (pos.end - pos.begin !== 0){
-						clearBuffer(pos.begin, pos.end);
-						shiftL(pos.begin, pos.end-1);
-					}
-					p = seekNext(pos.begin - 1);
-					if (p < len) {
-						c = String.fromCharCode(k);
-						if (tests[p].test(c)) {
-							shiftR(p);
-
-							buffer[p] = c;
-							writeBuffer();
-							next = seekNext(p);
-							if(android){
-								setTimeout($.proxy($.fn.caret,input,next),0);
-							}else{
-
-								input.caret(next);
-							}
-
-							if (settings.completed && next >= len) {
-								settings.completed.call(input);
-							}
-						}
-					}
-					e.preventDefault();
-				}
-			}
-
-			function clearBuffer(start, end) {
-				var i;
-				for (i = start; i < end && i < len; i++) {
-					if (tests[i]) {
-						buffer[i] = settings.placeholder;
-					}
-				}
-			}
-
-			function writeBuffer() { input.val(buffer.join('')); }
-
-			function checkVal(allow) {
-				//try to place characters where they belong
-				var test = input.val(),
-					lastMatch = -1,
-					i,
-					c;
-
-				for (i = 0, pos = 0; i < len; i++) {
-					if (tests[i]) {
-						buffer[i] = settings.placeholder;
-						while (pos++ < test.length) {
-							c = test.charAt(pos - 1);
-							if (tests[i].test(c)) {
-								buffer[i] = c;
-								lastMatch = i;
-								break;
-							}
-						}
-						if (pos > test.length) {
-							break;
-						}
-					} else if (buffer[i] === test.charAt(pos) && i !== partialPosition) {
-						pos++;
-						lastMatch = i;
-					}
-				}
-				if (allow) {
-					writeBuffer();
-				} else if (lastMatch + 1 < partialPosition) {
-					input.val("");
-					//clearBuffer(0, len);
-				} else {
-					writeBuffer();
-					input.val(input.val().substring(0, lastMatch + 1));
-				}
-				return (partialPosition ? i : firstNonMaskPos);
-			}
-
-			input.data($.mask.dataName,function(){
-				return $.map(buffer, function(c, i) {
-					return tests[i]&&c!=settings.placeholder ? c : null;
-				}).join('');
-			});
-
-			if (!input.attr("readonly"))
-				input
-				.one("unmask", function() {
-					input
-						.unbind(".mask")
-						.removeData($.mask.dataName);
-				})
-				.bind("focus.mask", function() {
-					clearTimeout(caretTimeoutId);
-					var pos,
-						moveCaret;
-
-					focusText = input.val();
-          input.data('cache',focusText);
-					pos = checkVal();
-					
-					caretTimeoutId = setTimeout(function(){
-						writeBuffer();
-						if (pos == mask.length) {
-							input.caret(0, pos);
-						} else {
-              if(input.data('cache') !== ""){
-                input.val(input.data('cache'));
-              }
-              input.caret(pos);
-						}
-					}, 10);
-				})
-				.bind("blur.mask", function() {
-
-				})
-				.bind("keydown.mask", keydownEvent)
-				.bind("keypress.mask", keypressEvent)
-				.bind(pasteEventName, function() {
-					setTimeout(function() { 
-						var pos=checkVal(true);
-						input.caret(pos); 
-						if (settings.completed && pos == input.val().length)
-							settings.completed.call(input);
-					}, 0);
+				timeboxparent.addClass('xdsoft_scroller_box').append(scrollbar);
+				scroller.on('mousedown.xdsoft_scroller',function ( event ) {
+					if( !parentHeight )
+						timeboxparent.trigger('resize_scroll.xdsoft_scroller',[_percent]);
+					var pageY = event.pageY,
+						top = parseInt(scroller.css('margin-top')),
+						h1 = scrollbar[0].offsetHeight;
+					$(document.body).addClass('xdsoft_noselect');
+					$([document.body,window]).on('mouseup.xdsoft_scroller',function arguments_callee() {
+						$([document.body,window]).off('mouseup.xdsoft_scroller',arguments_callee)
+							.off('mousemove.xdsoft_scroller',move)
+							.removeClass('xdsoft_noselect');
+					});
+					$(document.body).on('mousemove.xdsoft_scroller',move = function(event) {
+						var offset = event.pageY-pageY+top;
+						if( offset<0 )
+							offset = 0;
+						if( offset+scroller[0].offsetHeight>h1 )
+							offset = h1-scroller[0].offsetHeight;
+						timeboxparent.trigger('scroll_element.xdsoft_scroller',[maximumOffset?offset/maximumOffset:0]);
+					});
 				});
-			checkVal(); //Perform initial check for existing values
+
+				timeboxparent
+					.on('scroll_element.xdsoft_scroller',function( event,percent ) {
+						if( !parentHeight )
+							timeboxparent.trigger('resize_scroll.xdsoft_scroller',[percent,true]);
+						percent = percent>1?1:(percent<0||isNaN(percent))?0:percent;
+						scroller.css('margin-top',maximumOffset*percent);
+						timebox.css('marginTop',-parseInt((height-parentHeight)*percent))
+					})
+					.on('resize_scroll.xdsoft_scroller',function( event,_percent,noTriggerScroll ) {
+						parentHeight = timeboxparent[0].clientHeight;
+						height = timebox[0].offsetHeight;
+						var percent = parentHeight/height,
+							sh = percent*scrollbar[0].offsetHeight;
+						if( percent>1 )
+							scroller.hide();
+						else{
+							scroller.show();
+							scroller.css('height',parseInt(sh>10?sh:10));
+							maximumOffset = scrollbar[0].offsetHeight-scroller[0].offsetHeight;
+							if( noTriggerScroll!==true )
+								timeboxparent.trigger('scroll_element.xdsoft_scroller',[_percent?_percent:Math.abs(parseInt(timebox.css('marginTop')))/(height-parentHeight)]);
+						}
+					});
+				timeboxparent.mousewheel&&timeboxparent.mousewheel(function(event, delta, deltaX, deltaY) {
+					var top = Math.abs(parseInt(timebox.css('marginTop')));
+					timeboxparent.trigger('scroll_element.xdsoft_scroller',[(top-delta*20)/(height-parentHeight)]);
+					event.stopPropagation();
+					return false;
+				});
+				timeboxparent.on('touchstart',function( event ) {
+					start = pointerEventToXY(event);
+				});
+				timeboxparent.on('touchmove',function( event ) {
+					if( start ) {
+						var coord = pointerEventToXY(event), top = Math.abs(parseInt(timebox.css('marginTop')));
+						timeboxparent.trigger('scroll_element.xdsoft_scroller',[(top-(coord.y-start.y))/(height-parentHeight)]);
+						event.stopPropagation();
+						event.preventDefault();
+					};
+				});
+				timeboxparent.on('touchend touchcancel',function( event ) {
+					start = false;
+				});
+			}
+			timeboxparent.trigger('resize_scroll.xdsoft_scroller',[_percent]);
 		});
-	}
-});
+	};
+	$.fn.datetimepicker = function( opt ) {
+		var KEY0 = 48,
+			KEY9 = 57,
+			_KEY0 = 96,
+			_KEY9 = 105,
+			CTRLKEY = 17,
+			DEL = 46,
+			ENTER = 13,
+			ESC = 27,
+			BACKSPACE = 8,
+			ARROWLEFT = 37,
+			ARROWUP = 38,
+			ARROWRIGHT = 39,
+			ARROWDOWN = 40,
+			TAB = 9,
+			F5 = 116,
+			AKEY = 65,
+			CKEY = 67,
+			VKEY = 86,
+			ZKEY = 90,
+			YKEY = 89,
+			ctrlDown	=	false,
+			options = ($.isPlainObject(opt)||!opt)?$.extend({},default_options,opt):$.extend({},default_options),
+			createDateTimePicker = function( input ) {
+				var datetimepicker = $('<div '+(options.id?'id="'+options.id+'"':'')+' '+(options.style?'style="'+options.style+'"':'')+' class="xdsoft_datetimepicker xdsoft_noselect '+options.className+'"></div>'),
+					xdsoft_copyright = $('<div class="xdsoft_copyright"><a target="_blank" href="http://xdsoft.net/jqplugins/datetimepicker/">xdsoft.net</a></div>'),
+					datepicker = $('<div class="xdsoft_datepicker active"></div>'),
+					mounth_picker = $('<div class="xdsoft_mounthpicker"><button type="button" class="xdsoft_prev"></button><button type="button" class="xdsoft_today_button"></button><div class="xdsoft_label xdsoft_month"><span></span></div><div class="xdsoft_label xdsoft_year"><span></span></div><button type="button" class="xdsoft_next"></button></div>'),
+					calendar = $('<div class="xdsoft_calendar"></div>'),
+					timepicker = $('<div class="xdsoft_timepicker active"><button type="button" class="xdsoft_prev"></button><div class="xdsoft_time_box"></div><button type="button" class="xdsoft_next"></button></div>'),
+					timeboxparent = timepicker.find('.xdsoft_time_box').eq(0),
+					timebox = $('<div class="xdsoft_time_variant"></div>'),
+					scrollbar = $('<div class="xdsoft_scrollbar"></div>'),
+					scroller = $('<div class="xdsoft_scroller"></div>'),
+					monthselect =$('<div class="xdsoft_select xdsoft_monthselect"><div></div></div>'),
+					yearselect =$('<div class="xdsoft_select xdsoft_yearselect"><div></div></div>');
+
+				//constructor lego
+				mounth_picker
+					.find('.xdsoft_month span')
+						.after(monthselect);
+				mounth_picker
+					.find('.xdsoft_year span')
+						.after(yearselect);
+
+				mounth_picker
+					.find('.xdsoft_month,.xdsoft_year')
+						.on('mousedown.xdsoft',function(event) {
+							mounth_picker
+								.find('.xdsoft_select')
+									.hide();
+							var select = $(this).find('.xdsoft_select').eq(0),
+								val = 0,
+								top = 0;
+
+							if( _xdsoft_datetime.currentTime )
+								val = _xdsoft_datetime.currentTime[$(this).hasClass('xdsoft_month')?'getMonth':'getFullYear']();
+
+							select.show();
+							for(var items = select.find('div.xdsoft_option'),i = 0;i<items.length;i++) {
+								if( items.eq(i).data('value')==val ) {
+									break;
+								}else top+=items[0].offsetHeight;
+							}
+
+							select.xdsoftScroller(top/(select.children()[0].offsetHeight-(select[0].clientHeight)));
+							event.stopPropagation();
+							return false;
+						});
+
+				mounth_picker
+					.find('.xdsoft_select')
+						.xdsoftScroller()
+						.on('mousedown.xdsoft',function( event ) {
+							event.stopPropagation();
+							event.preventDefault();
+						})
+						.on('mousedown.xdsoft','.xdsoft_option',function( event ) {
+							if( _xdsoft_datetime&&_xdsoft_datetime.currentTime )
+								_xdsoft_datetime.currentTime[$(this).parent().parent().hasClass('xdsoft_monthselect')?'setMonth':'setFullYear']($(this).data('value'));
+							$(this).parent().parent().hide();
+							datetimepicker.trigger('xchange.xdsoft');
+							options.onChangeMonth&&options.onChangeMonth.call&&options.onChangeMonth.call(datetimepicker,_xdsoft_datetime.currentTime,datetimepicker.data('input'));
+						});
 
 
+				// set options
+				datetimepicker.setOptions = function( _options ) {
+					options = $.extend({},options,_options);
+					if( (options.open||options.opened)&&(!options.inline) ) {
+						input.trigger('open.xdsoft');
+					}
+
+					if( options.inline ) {
+						datetimepicker.addClass('xdsoft_inline');
+						input.after(datetimepicker).hide();
+						datetimepicker.trigger('afterOpen.xdsoft');
+					}
+
+					if( options.inverseButton ) {
+						options.next = 'xdsoft_prev';
+						options.prev = 'xdsoft_next';
+					}
+
+					if( !options.datepicker && options.timepicker )
+						datepicker.removeClass('active');
+
+					if( options.datepicker && !options.timepicker )
+						timepicker.removeClass('active');
+
+					if( options.value ){
+						input&&input.val&&input.val(options.value);
+						_xdsoft_datetime.setCurrentTime(options.value);
+					}
+
+					if( isNaN(options.dayOfWeekStart)||parseInt(options.dayOfWeekStart)<0||parseInt(options.dayOfWeekStart)>6 )
+						options.dayOfWeekStart = 0;
+					else
+						options.dayOfWeekStart = parseInt(options.dayOfWeekStart);
+
+					if( !options.timepickerScrollbar )
+						scrollbar.hide();
+
+					var tmpDate = [],timeOffset;
+					if( options.minDate && ( tmpDate = /^-(.*)$/.exec(options.minDate) ) && (tmpDate=Date.parseDate(tmpDate[1], options.formatDate)) ) {
+						timeOffset = tmpDate.getTime()+-1*(tmpDate.getTimezoneOffset())*60000;
+						options.minDate = new Date((_xdsoft_datetime.now()).getTime()-timeOffset).dateFormat( options.formatDate );
+					}
+					if( options.maxDate && ( tmpDate = /^\+(.*)$/.exec(options.maxDate) ) && (tmpDate=Date.parseDate(tmpDate[1], options.formatDate)) ) {
+						timeOffset = tmpDate.getTime()+-1*(tmpDate.getTimezoneOffset())*60000;
+						options.maxDate = new Date((_xdsoft_datetime.now()).getTime()+timeOffset).dateFormat( options.formatDate );
+					}
+
+					mounth_picker
+						.find('.xdsoft_today_button')
+							.css('visibility',!options.todayButton?'hidden':'visible');
+
+					if( options.mask ) {
+						var e,
+							getCaretPos = function ( input ) {
+								try{
+									if ( document.selection && document.selection.createRange ) {
+										var range = document.selection.createRange();
+										return range.getBookmark().charCodeAt(2) - 2;
+									}else
+										if ( input.setSelectionRange )
+											return input.selectionStart;
+								}catch(e) {
+									return 0;
+								}
+							},
+							setCaretPos = function ( node,pos ) {
+								var node = (typeof node == "string" || node instanceof String) ? document.getElementById(node) : node;
+								if(!node) {
+									return false;
+								}else if(node.createTextRange) {
+									var textRange = node.createTextRange();
+									textRange.collapse(true);
+                  /***point1***/
+                  console.log(node);
+                  console.log(pos);
+									textRange.moveEnd('character', pos);
+
+
+									textRange.moveStart('character',pos);
+									textRange.select();
+									return true;
+								}else if(node.setSelectionRange) {
+									node.setSelectionRange(pos,pos);
+									return true;
+								}
+								return false;
+							},
+							isValidValue = function ( mask,value ) {
+								var reg = mask
+									.replace(/([\[\]\/\{\}\(\)\-\.\+]{1})/g,'\\$1')
+									.replace(/_/g,'{digit+}')
+									.replace(/([0-9]{1})/g,'{digit$1}')
+									.replace(/\{digit([0-9]{1})\}/g,'[0-$1_]{1}')
+									.replace(/\{digit[\+]\}/g,'[0-9_]{1}');
+								return RegExp(reg).test(value);
+							};
+						input.off('keydown.xdsoft');
+						switch(true) {
+							case ( options.mask===true ):
+								//options.mask = (new Date()).dateFormat( options.format );
+								//options.mask = options.mask.replace(/[0-9]/g,'_');
+								options.mask = options.format
+									.replace(/Y/g,'9999')
+									.replace(/F/g,'9999')
+									.replace(/m/g,'19')
+									.replace(/d/g,'39')
+									.replace(/H/g,'29')
+									.replace(/i/g,'59')
+									.replace(/s/g,'59');
+							case ( $.type(options.mask) == 'string' ):
+								if( !isValidValue( options.mask,input.val() ) )
+									input.val(options.mask.replace(/[0-9]/g,'_'));
+
+								input.on('keydown.xdsoft',function( event ) {
+									var val = this.value,
+										key = event.which;
+									switch(true) {
+										case (( key>=KEY0&&key<=KEY9 )||( key>=_KEY0&&key<=_KEY9 ))||(key==BACKSPACE||key==DEL):
+											var pos = getCaretPos(this),
+												digit = ( key!=BACKSPACE&&key!=DEL )?String.fromCharCode((_KEY0 <= key && key <= _KEY9)? key-KEY0 : key):'_';
+											if( (key==BACKSPACE||key==DEL)&&pos ) {
+												pos--;
+												digit='_';
+											}
+											while( /[^0-9_]/.test(options.mask.substr(pos,1))&&pos<options.mask.length&&pos>0 )
+												pos+=( key==BACKSPACE||key==DEL )?-1:1;
+
+											val = val.substr(0,pos)+digit+val.substr(pos+1);
+											if( $.trim(val)=='' )
+												val = options.mask.replace(/[0-9]/g,'_');
+											else
+												if( pos==options.mask.length )
+													break;
+
+											pos+=(key==BACKSPACE||key==DEL)?0:1;
+											while( /[^0-9_]/.test(options.mask.substr(pos,1))&&pos<options.mask.length&&pos>0 )
+												pos+=(key==BACKSPACE||key==DEL)?-1:1;
+											if( isValidValue( options.mask,val ) ) {
+												this.value = val;
+												setCaretPos(this,pos);
+											}else if( $.trim(val)=='' )
+												this.value = options.mask.replace(/[0-9]/g,'_');
+											else{
+												input.trigger('error_input.xdsoft');
+											}
+										break;
+										case ( !!~([AKEY,CKEY,VKEY,ZKEY,YKEY].indexOf(key))&&ctrlDown ):
+										 case !!~([ESC,ARROWUP,ARROWDOWN,ARROWLEFT,ARROWRIGHT,F5,CTRLKEY,TAB,ENTER].indexOf(key)):
+										return true;
+									}
+									event.preventDefault();
+									return false;
+								});
+							break;
+						}
+					}
+					if( options.validateOnBlur ) {
+						input
+							.off('blur.xdsoft')
+							.on('blur.xdsoft', function() {
+								if( options.allowBlank && !$.trim($(this).val()).length ) {
+									$(this).val(null);
+									datetimepicker.data('xdsoft_datetime').empty();
+								}else if( !Date.parseDate( $(this).val(), options.format ) ) {
+									$(this).val((_xdsoft_datetime.now()).dateFormat( options.format ));
+									datetimepicker.data('xdsoft_datetime').setCurrentTime($(this).val());
+								}
+								else{
+									datetimepicker.data('xdsoft_datetime').setCurrentTime($(this).val());
+ 								}
+								datetimepicker.trigger('changedatetime.xdsoft');
+							});
+					}
+					options.dayOfWeekStartPrev = (options.dayOfWeekStart==0)?6:options.dayOfWeekStart-1;
+					datetimepicker
+						.trigger('xchange.xdsoft');
+				};
+
+				datetimepicker
+					.data('options',options)
+					.on('mousedown.xdsoft',function( event ) {
+						event.stopPropagation();
+						event.preventDefault();
+						yearselect.hide();
+						monthselect.hide();
+						return false;
+					});
+
+				var scroll_element = timepicker.find('.xdsoft_time_box');
+				scroll_element.append(timebox);
+				scroll_element.xdsoftScroller();
+				datetimepicker.on('afterOpen.xdsoft',function() {
+					scroll_element.xdsoftScroller();
+				});
+
+				datetimepicker
+					.append(datepicker)
+					.append(timepicker);
+
+				if( options.withoutCopyright!==true )
+					datetimepicker
+						.append(xdsoft_copyright);
+
+				datepicker
+					.append(mounth_picker)
+					.append(calendar);
+
+				$('body').append(datetimepicker);
+
+				var _xdsoft_datetime = new function() {
+					var _this = this;
+					_this.now = function() {
+						var d = new Date();
+						if( options.yearOffset )
+							d.setFullYear(d.getFullYear()+options.yearOffset);
+						return d;
+					};
+
+					_this.currentTime = this.now();
+					_this.isValidDate = function (d) {
+						if ( Object.prototype.toString.call(d) !== "[object Date]" )
+							return false;
+						return !isNaN(d.getTime());
+					};
+
+					_this.setCurrentTime = function( dTime) {
+						_this.currentTime = (typeof dTime == 'string')? _this.strtodatetime(dTime) : _this.isValidDate(dTime) ? dTime: _this.now();
+						datetimepicker.trigger('xchange.xdsoft');
+					};
+
+					_this.empty = function() {
+						_this.currentTime = null;
+					};
+
+					_this.getCurrentTime = function( dTime) {
+						return _this.currentTime;
+					};
+
+					_this.nextMonth = function() {
+						var month = _this.currentTime.getMonth()+1;
+						if( month==12 ) {
+							_this.currentTime.setFullYear(_this.currentTime.getFullYear()+1);
+							month = 0;
+						}
+						_this.currentTime.setMonth(month);
+						options.onChangeMonth&&options.onChangeMonth.call&&options.onChangeMonth.call(datetimepicker,_xdsoft_datetime.currentTime,datetimepicker.data('input'));
+						datetimepicker.trigger('xchange.xdsoft');
+						return month;
+					};
+
+					_this.prevMonth = function() {
+						var month = _this.currentTime.getMonth()-1;
+						if( month==-1 ) {
+							_this.currentTime.setFullYear(_this.currentTime.getFullYear()-1);
+							month = 11;
+						}
+						_this.currentTime.setMonth(month);
+						options.onChangeMonth&&options.onChangeMonth.call&&options.onChangeMonth.call(datetimepicker,_xdsoft_datetime.currentTime,datetimepicker.data('input'));
+						datetimepicker.trigger('xchange.xdsoft');
+						return month;
+					};
+
+					_this.strtodatetime = function( sDateTime ) {
+						var currentTime = sDateTime?Date.parseDate(sDateTime, options.format):_this.now();
+						if( !_this.isValidDate(currentTime) )
+							currentTime = _this.now();
+						return currentTime;
+					};
+
+					_this.strtodate = function( sDate ) {
+						var currentTime = sDate?Date.parseDate(sDate, options.formatDate):_this.now();
+						if( !_this.isValidDate(currentTime) )
+							currentTime = _this.now();
+						return currentTime;
+					};
+
+					_this.strtotime = function( sTime ) {
+						var currentTime = sTime?Date.parseDate(sTime, options.formatTime):_this.now();
+						if( !_this.isValidDate(currentTime) )
+							currentTime = _this.now();
+						return currentTime;
+					};
+
+					_this.str = function() {
+						return _this.currentTime.dateFormat(options.format);
+					};
+				};
+				mounth_picker
+					.find('.xdsoft_today_button')
+						.on('mousedown.xdsoft',function() {
+							datetimepicker.data('changed',true);
+							_xdsoft_datetime.setCurrentTime(0);
+							datetimepicker.trigger('afterOpen.xdsoft');
+						}).on('dblclick.xdsoft',function(){
+							input.val( _xdsoft_datetime.str() );
+							datetimepicker.trigger('close.xdsoft');
+						});
+				mounth_picker
+					.find('.xdsoft_prev,.xdsoft_next')
+						.on('mousedown.xdsoft',function() {
+							var $this = $(this),
+								timer = 0,
+								stop = false;
+
+							(function arguments_callee1(v) {
+								var month =  _xdsoft_datetime.currentTime.getMonth();
+								if( $this.hasClass( options.next ) ) {
+									_xdsoft_datetime.nextMonth();
+								}else if( $this.hasClass( options.prev ) ) {
+									_xdsoft_datetime.prevMonth();
+								}
+								!stop&&(timer = setTimeout(arguments_callee1,v?v:100));
+							})(500);
+
+							$([document.body,window]).on('mouseup.xdsoft',function arguments_callee2() {
+								clearTimeout(timer);
+								stop = true;
+								$([document.body,window]).off('mouseup.xdsoft',arguments_callee2);
+							});
+						});
+
+				timepicker
+					.find('.xdsoft_prev,.xdsoft_next')
+						.on('mousedown.xdsoft',function() {
+							var $this = $(this),
+								timer = 0,
+								stop = false,
+								period = 110;
+							(function arguments_callee4(v) {
+								var pheight = timeboxparent[0].clientHeight,
+									height = timebox[0].offsetHeight,
+									top = Math.abs(parseInt(timebox.css('marginTop')));
+								if( $this.hasClass(options.next) && (height-pheight)- options.timeHeightInTimePicker>=top ) {
+									timebox.css('marginTop','-'+(top+options.timeHeightInTimePicker)+'px')
+								}else if( $this.hasClass(options.prev) && top-options.timeHeightInTimePicker>=0  ) {
+									timebox.css('marginTop','-'+(top-options.timeHeightInTimePicker)+'px')
+								}
+								timeboxparent.trigger('scroll_element.xdsoft_scroller',[Math.abs(parseInt(timebox.css('marginTop'))/(height-pheight))]);
+								period= ( period>10 )?10:period-10;
+								!stop&&(timer = setTimeout(arguments_callee4,v?v:period));
+							})(500);
+							$([document.body,window]).on('mouseup.xdsoft',function arguments_callee5() {
+								clearTimeout(timer);
+								stop = true;
+								$([document.body,window])
+									.off('mouseup.xdsoft',arguments_callee5);
+							});
+						});
+
+				// base handler - generating a calendar and timepicker
+				datetimepicker
+					.on('xchange.xdsoft',function( event ) {
+						var table 	=	'',
+							start	= new Date(_xdsoft_datetime.currentTime.getFullYear(),_xdsoft_datetime.currentTime.getMonth(),1),
+							i = 0,
+							today = _xdsoft_datetime.now();
+						while( start.getDay()!=options.dayOfWeekStart )
+							start.setDate(start.getDate()-1);
+
+						//generate calendar
+						table+='<table><thead><tr>';
+
+						// days
+						for(var j = 0; j<7; j++) {
+							table+='<th>'+options.i18n[options.lang].dayOfWeek[(j+options.dayOfWeekStart)>6?0:j+options.dayOfWeekStart]+'</th>';
+						}
+
+						table+='</tr></thead>';
+						table+='<tbody><tr>';
+						var maxDate = false, minDate = false;
+						if( options.maxDate!==false ) {
+							maxDate = _xdsoft_datetime.strtodate(options.maxDate);
+							maxDate = new Date(maxDate.getFullYear(),maxDate.getMonth(),maxDate.getDate(),23,59,59,999);
+						}
+						if( options.minDate!==false ) {
+							minDate = _xdsoft_datetime.strtodate(options.minDate);
+							minDate = new Date(minDate.getFullYear(),minDate.getMonth(),minDate.getDate());
+						}
+						var d,y,m,classes = [];
+						while( i<_xdsoft_datetime.currentTime.getDaysInMonth()||start.getDay()!=options.dayOfWeekStart||_xdsoft_datetime.currentTime.getMonth()==start.getMonth() ) {
+							classes = [];
+							i++;
+
+							d = start.getDate(); y = start.getFullYear(); m = start.getMonth();
+
+							classes.push('xdsoft_date');
+
+							if( ( maxDate!==false && start > maxDate )||(  minDate!==false && start < minDate ) ){
+								classes.push('xdsoft_disabled');
+							}
+
+							if( _xdsoft_datetime.currentTime.getMonth()!=m ) classes.push('xdsoft_other_month');
+
+							if( (options.defaultSelect||datetimepicker.data('changed')) && _xdsoft_datetime.currentTime.dateFormat('d.m.Y')==start.dateFormat('d.m.Y') ) {
+								classes.push('xdsoft_current');
+							}
+
+							if( today.dateFormat('d.m.Y')==start.dateFormat('d.m.Y') ) {
+								classes.push('xdsoft_today');
+							}
+
+							if( start.getDay()==0||start.getDay()==6||~options.weekends.indexOf(start.dateFormat('d.m.Y')) ) {
+								classes.push('xdsoft_weekend');
+							}
+
+							table+='<td data-date="'+d+'" data-month="'+m+'" data-year="'+y+'"'+' class="xdsoft_date xdsoft_day_of_week'+start.getDay()+' '+ classes.join(' ')+'">'+
+										'<div>'+d+'</div>'+
+									'</td>';
+
+							if( start.getDay()==options.dayOfWeekStartPrev ) {
+								table+='</tr>';
+							}
+
+							start.setDate(d+1);
+						}
+						table+='</tbody></table>';
+
+						calendar.html(table);
+
+						mounth_picker.find('.xdsoft_label span').eq(0).text(options.i18n[options.lang].months[_xdsoft_datetime.currentTime.getMonth()]);
+						mounth_picker.find('.xdsoft_label span').eq(1).text(_xdsoft_datetime.currentTime.getFullYear());
+
+						// generate timebox
+						var time = '',
+							h = '',
+							m ='',
+							line_time = function line_time( h,m ) {
+								var now = _xdsoft_datetime.now();
+								now.setHours(h);
+								h = parseInt(now.getHours());
+								now.setMinutes(m);
+								m = parseInt(now.getMinutes());
+
+								classes = [];
+								if( (options.maxTime!==false&&_xdsoft_datetime.strtotime(options.maxTime).getTime()<now.getTime())||(options.minTime!==false&&_xdsoft_datetime.strtotime(options.minTime).getTime()>now.getTime()))
+									classes.push('xdsoft_disabled');
+								if( (options.defaultSelect||datetimepicker.data('changed')) && parseInt(_xdsoft_datetime.currentTime.getHours())==parseInt(h)&&(options.step>59||Math[options.roundTime](_xdsoft_datetime.currentTime.getMinutes()/options.step)*options.step==parseInt(m)))
+									classes.push('xdsoft_current');
+								if( parseInt(today.getHours())==parseInt(h)&&parseInt(today.getMinutes())==parseInt(m))
+									classes.push('xdsoft_today');
+								time+= '<div class="xdsoft_time '+classes.join(' ')+'" data-hour="'+h+'" data-minute="'+m+'">'+now.dateFormat(options.formatTime)+'</div>';
+							};
+
+						if( !options.allowTimes || !$.isArray(options.allowTimes) || !options.allowTimes.length ) {
+							for( var i=0,j=0;i<(options.hours12?12:24);i++ ) {
+								for( j=0;j<60;j+=options.step ) {
+									h = (i<10?'0':'')+i;
+									m = (j<10?'0':'')+j;
+									line_time( h,m );
+								}
+							}
+						}else{
+							for( var i=0;i<options.allowTimes.length;i++ ) {
+								h = _xdsoft_datetime.strtotime(options.allowTimes[i]).getHours();
+								m = _xdsoft_datetime.strtotime(options.allowTimes[i]).getMinutes();
+								line_time( h,m );
+							}
+						}
+
+						timebox.html(time);
+
+						var opt = '',
+							i = 0;
+
+						for( i = parseInt(options.yearStart,10)+options.yearOffset;i<= parseInt(options.yearEnd,10)+options.yearOffset;i++ ) {
+							opt+='<div class="xdsoft_option '+(_xdsoft_datetime.currentTime.getFullYear()==i?'xdsoft_current':'')+'" data-value="'+i+'">'+i+'</div>';
+						}
+						yearselect.children().eq(0)
+												.html(opt);
+
+						for( i = 0,opt = '';i<= 11;i++ ) {
+							opt+='<div class="xdsoft_option '+(_xdsoft_datetime.currentTime.getMonth()==i?'xdsoft_current':'')+'" data-value="'+i+'">'+options.i18n[options.lang].months[i]+'</div>';
+						}
+						monthselect.children().eq(0).html(opt);
+						$(this).trigger('generate.xdsoft');
+						event.stopPropagation();
+					})
+					.on('afterOpen.xdsoft',function() {
+						if( options.timepicker && timebox.find('.xdsoft_current').length ) {
+							var pheight = timeboxparent[0].clientHeight,
+								height = timebox[0].offsetHeight,
+								top = timebox.find('.xdsoft_current').index()*options.timeHeightInTimePicker+1;
+							if( (height-pheight)<top )
+								top = height-pheight;
+							timebox.css('marginTop','-'+parseInt(top)+'px');
+							timeboxparent.trigger('scroll_element.xdsoft_scroller',[parseInt(top)/(height-pheight)]);
+						}
+					});
+				var timerclick = 0;
+				calendar
+					.on('click.xdsoft','td',function() {
+						timerclick++;
+						var $this = $(this),
+							currentTime = _xdsoft_datetime.currentTime;
+						if( $this.hasClass('xdsoft_disabled') )
+							return false;
+
+						currentTime.setFullYear( $this.data('year') );
+						currentTime.setMonth( $this.data('month') );
+						currentTime.setDate( $this.data('date') );
+						datetimepicker.trigger('select.xdsoft',[currentTime]);
+
+						input.val( _xdsoft_datetime.str() );
+						if( (timerclick>1||(options.closeOnDateSelect===true||( options.closeOnDateSelect===0&&!options.timepicker )))&&!options.inline ) {
+							datetimepicker.trigger('close.xdsoft');
+						}
+
+						if( options.onSelectDate &&	options.onSelectDate.call ) {
+							options.onSelectDate.call(datetimepicker,_xdsoft_datetime.currentTime,datetimepicker.data('input'));
+						}
+
+						datetimepicker.data('changed',true);
+						datetimepicker.trigger('xchange.xdsoft');
+						datetimepicker.trigger('changedatetime.xdsoft');
+						setTimeout(function(){
+							timerclick = 0;
+						},200);
+					});
+
+				timebox
+					.on('click.xdsoft','div',function() {
+						var $this = $(this),
+							currentTime = _xdsoft_datetime.currentTime;
+						if( $this.hasClass('xdsoft_disabled') )
+							return false;
+						currentTime.setHours($this.data('hour'));
+						currentTime.setMinutes($this.data('minute'));
+						datetimepicker.trigger('select.xdsoft',[currentTime]);
+
+						datetimepicker.data('input').val( _xdsoft_datetime.str() );
+
+						!options.inline&&datetimepicker.trigger('close.xdsoft');
+
+						if( options.onSelectTime&&options.onSelectTime.call ) {
+							options.onSelectTime.call(datetimepicker,_xdsoft_datetime.currentTime,datetimepicker.data('input'));
+						}
+						datetimepicker.data('changed',true);
+						datetimepicker.trigger('xchange.xdsoft');
+						datetimepicker.trigger('changedatetime.xdsoft');
+					});
+
+				datetimepicker.mousewheel&&datepicker.mousewheel(function(event, delta, deltaX, deltaY) {
+					if( !options.scrollMonth )
+						return true;
+					if( delta<0 )
+						_xdsoft_datetime.nextMonth();
+					else
+						_xdsoft_datetime.prevMonth();
+					return false;
+				});
+
+				datetimepicker.mousewheel&&timeboxparent.unmousewheel().mousewheel(function(event, delta, deltaX, deltaY) {
+					if( !options.scrollTime )
+						return true;
+					var pheight = timeboxparent[0].clientHeight,
+						height = timebox[0].offsetHeight,
+						top = Math.abs(parseInt(timebox.css('marginTop'))),
+						fl = true;
+					if( delta<0 && (height-pheight)-options.timeHeightInTimePicker>=top ) {
+						timebox.css('marginTop','-'+(top+options.timeHeightInTimePicker)+'px');
+						fl = false;
+					}else if( delta>0&&top-options.timeHeightInTimePicker>=0 ) {
+						timebox.css('marginTop','-'+(top-options.timeHeightInTimePicker)+'px');
+						fl = false;
+					}
+					timeboxparent.trigger('scroll_element.xdsoft_scroller',[Math.abs(parseInt(timebox.css('marginTop'))/(height-pheight))]);
+					event.stopPropagation();
+					return fl;
+				});
+
+				datetimepicker
+					.on('changedatetime.xdsoft',function() {
+						if( options.onChangeDateTime&&options.onChangeDateTime.call )
+							options.onChangeDateTime.call(datetimepicker,_xdsoft_datetime.currentTime,datetimepicker.data('input'));
+					})
+					.on('generate.xdsoft',function() {
+						if( options.onGenerate&&options.onGenerate.call )
+							options.onGenerate.call(datetimepicker,_xdsoft_datetime.currentTime,datetimepicker.data('input'));
+					});
+
+				var current_time_index = 0;
+				input.mousewheel&&input.mousewheel(function( event, delta, deltaX, deltaY ) {
+					if( !options.scrollInput )
+						return true;
+					if( !options.datepicker && options.timepicker ) {
+						current_time_index = timebox.find('.xdsoft_current').length?timebox.find('.xdsoft_current').eq(0).index():0;
+						if( current_time_index+delta>=0&&current_time_index+delta<timebox.children().length )
+							current_time_index+=delta;
+						timebox.children().eq(current_time_index).length&&timebox.children().eq(current_time_index).trigger('mousedown');
+						return false;
+					}else if( options.datepicker && !options.timepicker ) {
+						datepicker.trigger( event, [delta, deltaX, deltaY]);
+						input.val&&input.val( _xdsoft_datetime.str() );
+						datetimepicker.trigger('changedatetime.xdsoft');
+						return false;
+					}
+				});
+				var setPos = function() {
+					var offset = datetimepicker.data('input').offset(), top = offset.top+datetimepicker.data('input')[0].offsetHeight-1, left = offset.left;
+					if( top+datetimepicker[0].offsetHeight>$(window).height() )
+						top = offset.top-datetimepicker[0].offsetHeight+1;
+					if( left+datetimepicker[0].offsetWidth>$(window).width() )
+						left = offset.left-datetimepicker[0].offsetWidth+datetimepicker.data('input')[0].offsetWidth;
+					datetimepicker.css({
+						left:left,
+						top:top
+					});
+				};
+				datetimepicker
+					.on('open.xdsoft', function() {
+						var onShow = true;
+						if( options.onShow&&options.onShow.call) {
+							onShow = options.onShow.call(datetimepicker,_xdsoft_datetime.currentTime,datetimepicker.data('input'));
+						}
+						if( onShow!==false ) {
+							datetimepicker.show();
+							datetimepicker.trigger('afterOpen.xdsoft');
+							setPos();
+							$(window)
+								.off('resize.xdsoft',setPos)
+								.on('resize.xdsoft',setPos);
+
+							if( options.closeOnWithoutClick ) {
+								$([document.body,window]).on('mousedown.xdsoft',function arguments_callee6() {
+									datetimepicker.trigger('close.xdsoft');
+									$([document.body,window]).off('mousedown.xdsoft',arguments_callee6);
+								});
+							}
+						}
+					})
+					.on('close.xdsoft', function( event ) {
+						var onClose = true;
+						if( options.onClose&&options.onClose.call ) {
+							onClose=options.onClose.call(datetimepicker,_xdsoft_datetime.currentTime,datetimepicker.data('input'));
+						}
+						if( onClose!==false&&!options.opened&&!options.inline ) {
+							datetimepicker.hide();
+						}
+						event.stopPropagation();
+					})
+					.data('input',input);
+
+				var timer = 0,
+					timer1 = 0;
+
+				datetimepicker.data('xdsoft_datetime',_xdsoft_datetime);
+				datetimepicker.setOptions(options);
+
+				var ct = options.value?options.value:(input&&input.val&&input.val())?input.val():'';
+				if( ct && _xdsoft_datetime.isValidDate(ct = Date.parseDate(ct, options.format)) ) {
+					datetimepicker.data('changed',true);
+				}else
+					ct = '';
+
+				_xdsoft_datetime.setCurrentTime( ct?ct:0 );
+
+				datetimepicker.trigger('afterOpen.xdsoft');
+
+				input
+					.data( 'xdsoft_datetimepicker',datetimepicker )
+					.on('open.xdsoft focusin.xdsoft mousedown.xdsoft',function(event) {
+						if( input.is(':disabled')||input.is(':hidden')||!input.is(':visible') )
+							return;
+						clearTimeout(timer);
+						timer = setTimeout(function() {
+							if( input.is(':disabled')||input.is(':hidden')||!input.is(':visible') )
+								return;
+							_xdsoft_datetime.setCurrentTime((input&&input.val&&input.val())?input.val():0);
+							datetimepicker.trigger('open.xdsoft');
+						},100);
+					})
+					.on('keydown.xdsoft',function( event ) {
+						var val = this.value,
+							key = event.which;
+						switch(true) {
+							case !!~([ENTER].indexOf(key)):
+								var elementSelector = $("input:visible,textarea:visible");
+								datetimepicker.trigger('close.xdsoft');
+								elementSelector.eq(elementSelector.index(this) + 1).focus();
+							return false;
+							case !!~[TAB].indexOf(key):
+								datetimepicker.trigger('close.xdsoft');
+							return true;
+						}
+					});
+			},
+			destroyDateTimePicker = function( input ) {
+				var datetimepicker = input.data('xdsoft_datetimepicker');
+				if( datetimepicker ) {
+					datetimepicker.data('xdsoft_datetime',null);
+					datetimepicker.remove();
+					input
+						.data( 'xdsoft_datetimepicker',null )
+						.off( 'open.xdsoft focusin.xdsoft focusout.xdsoft mousedown.xdsoft blur.xdsoft keydown.xdsoft' );
+					$(window).off('resize.xdsoft');
+					$([window,document.body]).off('mousedown.xdsoft');
+					input.unmousewheel&&input.unmousewheel();
+				}
+			};
+		$(document)
+			.off('keydown.xdsoftctrl keyup.xdsoftctrl')
+			.on('keydown.xdsoftctrl',function(e) {
+				if ( e.keyCode == CTRLKEY )
+					ctrlDown = true;
+			})
+			.on('keyup.xdsoftctrl',function(e) {
+				if ( e.keyCode == CTRLKEY )
+					ctrlDown = false;
+			});
+		return this.each(function() {
+			var datetimepicker;
+			if( datetimepicker = $(this).data('xdsoft_datetimepicker') ) {
+				if( $.type(opt) === 'string' ) {
+					switch(opt) {
+						case 'show':
+							$(this).select().focus();
+							datetimepicker.trigger( 'open.xdsoft' );
+						break;
+						case 'hide':
+							datetimepicker.trigger('close.xdsoft');
+						break;
+						case 'destroy':
+							destroyDateTimePicker($(this));
+						break;
+						case 'reset':
+							this.value = this.defaultValue;
+							if(!this.value || !datetimepicker.data('xdsoft_datetime').isValidDate(Date.parseDate(this.value, options.format)))
+								datetimepicker.data('changed',false);
+							datetimepicker.data('xdsoft_datetime').setCurrentTime(this.value);
+						break;
+					}
+				}else{
+					datetimepicker
+						.setOptions(opt);
+				}
+				return 0;
+			}else
+				($.type(opt) !== 'string')&&createDateTimePicker($(this));
+		});
+	};
+})( jQuery );
+
+//http://www.xaprb.com/blog/2005/12/12/javascript-closures-for-runtime-efficiency/
+/*
+ * Copyright (C) 2004 Baron Schwartz <baron at sequent dot org>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, version 2.1.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details.
+ */
+Date.parseFunctions={count:0};Date.parseRegexes=[];Date.formatFunctions={count:0};Date.prototype.dateFormat=function(format) {if(Date.formatFunctions[format]==null) {Date.createNewFormat(format)}var func=Date.formatFunctions[format];return this[func]()};Date.createNewFormat=function(format) {var funcName="format"+Date.formatFunctions.count++;Date.formatFunctions[format]=funcName;var code="Date.prototype."+funcName+" = function() {return ";var special=false;var ch='';for(var i=0;i<format.length;++i) {ch=format.charAt(i);if(!special&&ch=="\\") {special=true}else if(special) {special=false;code+="'"+String.escape(ch)+"' + "}else{code+=Date.getFormatCode(ch)}}eval(code.substring(0,code.length-3)+";}")};Date.getFormatCode=function(character) {switch(character) {case"d":return"String.leftPad(this.getDate(), 2, '0') + ";case"D":return"Date.dayNames[this.getDay()].substring(0, 3) + ";case"j":return"this.getDate() + ";case"l":return"Date.dayNames[this.getDay()] + ";case"S":return"this.getSuffix() + ";case"w":return"this.getDay() + ";case"z":return"this.getDayOfYear() + ";case"W":return"this.getWeekOfYear() + ";case"F":return"Date.monthNames[this.getMonth()] + ";case"m":return"String.leftPad(this.getMonth() + 1, 2, '0') + ";case"M":return"Date.monthNames[this.getMonth()].substring(0, 3) + ";case"n":return"(this.getMonth() + 1) + ";case"t":return"this.getDaysInMonth() + ";case"L":return"(this.isLeapYear() ? 1 : 0) + ";case"Y":return"this.getFullYear() + ";case"y":return"('' + this.getFullYear()).substring(2, 4) + ";case"a":return"(this.getHours() < 12 ? 'am' : 'pm') + ";case"A":return"(this.getHours() < 12 ? 'AM' : 'PM') + ";case"g":return"((this.getHours() %12) ? this.getHours() % 12 : 12) + ";case"G":return"this.getHours() + ";case"h":return"String.leftPad((this.getHours() %12) ? this.getHours() % 12 : 12, 2, '0') + ";case"H":return"String.leftPad(this.getHours(), 2, '0') + ";case"i":return"String.leftPad(this.getMinutes(), 2, '0') + ";case"s":return"String.leftPad(this.getSeconds(), 2, '0') + ";case"O":return"this.getGMTOffset() + ";case"T":return"this.getTimezone() + ";case"Z":return"(this.getTimezoneOffset() * -60) + ";default:return"'"+String.escape(character)+"' + "}};Date.parseDate=function(input,format) {if(Date.parseFunctions[format]==null) {Date.createParser(format)}var func=Date.parseFunctions[format];return Date[func](input)};Date.createParser=function(format) {var funcName="parse"+Date.parseFunctions.count++;var regexNum=Date.parseRegexes.length;var currentGroup=1;Date.parseFunctions[format]=funcName;var code="Date."+funcName+" = function(input) {\n"+"var y = -1, m = -1, d = -1, h = -1, i = -1, s = -1;\n"+"var d = new Date();\n"+"y = d.getFullYear();\n"+"m = d.getMonth();\n"+"d = d.getDate();\n"+"var results = input.match(Date.parseRegexes["+regexNum+"]);\n"+"if (results && results.length > 0) {";var regex="";var special=false;var ch='';for(var i=0;i<format.length;++i) {ch=format.charAt(i);if(!special&&ch=="\\") {special=true}else if(special) {special=false;regex+=String.escape(ch)}else{obj=Date.formatCodeToRegex(ch,currentGroup);currentGroup+=obj.g;regex+=obj.s;if(obj.g&&obj.c) {code+=obj.c}}}code+="if (y > 0 && m >= 0 && d > 0 && h >= 0 && i >= 0 && s >= 0)\n"+"{return new Date(y, m, d, h, i, s);}\n"+"else if (y > 0 && m >= 0 && d > 0 && h >= 0 && i >= 0)\n"+"{return new Date(y, m, d, h, i);}\n"+"else if (y > 0 && m >= 0 && d > 0 && h >= 0)\n"+"{return new Date(y, m, d, h);}\n"+"else if (y > 0 && m >= 0 && d > 0)\n"+"{return new Date(y, m, d);}\n"+"else if (y > 0 && m >= 0)\n"+"{return new Date(y, m);}\n"+"else if (y > 0)\n"+"{return new Date(y);}\n"+"}return null;}";Date.parseRegexes[regexNum]=new RegExp("^"+regex+"$");eval(code)};Date.formatCodeToRegex=function(character,currentGroup) {switch(character) {case"D":return{g:0,c:null,s:"(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat)"};case"j":case"d":return{g:1,c:"d = parseInt(results["+currentGroup+"], 10);\n",s:"(\\d{1,2})"};case"l":return{g:0,c:null,s:"(?:"+Date.dayNames.join("|")+")"};case"S":return{g:0,c:null,s:"(?:st|nd|rd|th)"};case"w":return{g:0,c:null,s:"\\d"};case"z":return{g:0,c:null,s:"(?:\\d{1,3})"};case"W":return{g:0,c:null,s:"(?:\\d{2})"};case"F":return{g:1,c:"m = parseInt(Date.monthNumbers[results["+currentGroup+"].substring(0, 3)], 10);\n",s:"("+Date.monthNames.join("|")+")"};case"M":return{g:1,c:"m = parseInt(Date.monthNumbers[results["+currentGroup+"]], 10);\n",s:"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"};case"n":case"m":return{g:1,c:"m = parseInt(results["+currentGroup+"], 10) - 1;\n",s:"(\\d{1,2})"};case"t":return{g:0,c:null,s:"\\d{1,2}"};case"L":return{g:0,c:null,s:"(?:1|0)"};case"Y":return{g:1,c:"y = parseInt(results["+currentGroup+"], 10);\n",s:"(\\d{4})"};case"y":return{g:1,c:"var ty = parseInt(results["+currentGroup+"], 10);\n"+"y = ty > Date.y2kYear ? 1900 + ty : 2000 + ty;\n",s:"(\\d{1,2})"};case"a":return{g:1,c:"if (results["+currentGroup+"] == 'am') {\n"+"if (h == 12) { h = 0; }\n"+"} else { if (h < 12) { h += 12; }}",s:"(am|pm)"};case"A":return{g:1,c:"if (results["+currentGroup+"] == 'AM') {\n"+"if (h == 12) { h = 0; }\n"+"} else { if (h < 12) { h += 12; }}",s:"(AM|PM)"};case"g":case"G":case"h":case"H":return{g:1,c:"h = parseInt(results["+currentGroup+"], 10);\n",s:"(\\d{1,2})"};case"i":return{g:1,c:"i = parseInt(results["+currentGroup+"], 10);\n",s:"(\\d{2})"};case"s":return{g:1,c:"s = parseInt(results["+currentGroup+"], 10);\n",s:"(\\d{2})"};case"O":return{g:0,c:null,s:"[+-]\\d{4}"};case"T":return{g:0,c:null,s:"[A-Z]{3}"};case"Z":return{g:0,c:null,s:"[+-]\\d{1,5}"};default:return{g:0,c:null,s:String.escape(character)}}};Date.prototype.getTimezone=function() {return this.toString().replace(/^.*? ([A-Z]{3}) [0-9]{4}.*$/,"$1").replace(/^.*?\(([A-Z])[a-z]+ ([A-Z])[a-z]+ ([A-Z])[a-z]+\)$/,"$1$2$3")};Date.prototype.getGMTOffset=function() {return(this.getTimezoneOffset()>0?"-":"+")+String.leftPad(Math.floor(Math.abs(this.getTimezoneOffset())/60),2,"0")+String.leftPad(Math.abs(this.getTimezoneOffset())%60,2,"0")};Date.prototype.getDayOfYear=function() {var num=0;Date.daysInMonth[1]=this.isLeapYear()?29:28;for(var i=0;i<this.getMonth();++i) {num+=Date.daysInMonth[i]}return num+this.getDate()-1};Date.prototype.getWeekOfYear=function() {var now=this.getDayOfYear()+(4-this.getDay());var jan1=new Date(this.getFullYear(),0,1);var then=(7-jan1.getDay()+4);document.write(then);return String.leftPad(((now-then)/7)+1,2,"0")};Date.prototype.isLeapYear=function() {var year=this.getFullYear();return((year&3)==0&&(year%100||(year%400==0&&year)))};Date.prototype.getFirstDayOfMonth=function() {var day=(this.getDay()-(this.getDate()-1))%7;return(day<0)?(day+7):day};Date.prototype.getLastDayOfMonth=function() {var day=(this.getDay()+(Date.daysInMonth[this.getMonth()]-this.getDate()))%7;return(day<0)?(day+7):day};Date.prototype.getDaysInMonth=function() {Date.daysInMonth[1]=this.isLeapYear()?29:28;return Date.daysInMonth[this.getMonth()]};Date.prototype.getSuffix=function() {switch(this.getDate()) {case 1:case 21:case 31:return"st";case 2:case 22:return"nd";case 3:case 23:return"rd";default:return"th"}};String.escape=function(string) {return string.replace(/('|\\)/g,"\\$1")};String.leftPad=function(val,size,ch) {var result=new String(val);if(ch==null) {ch=" "}while(result.length<size) {result=ch+result}return result};Date.daysInMonth=[31,28,31,30,31,30,31,31,30,31,30,31];Date.monthNames=["January","February","March","April","May","June","July","August","September","October","November","December"];Date.dayNames=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];Date.y2kYear=50;Date.monthNumbers={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};Date.patterns={ISO8601LongPattern:"Y-m-d H:i:s",ISO8601ShortPattern:"Y-m-d",ShortDatePattern:"n/j/Y",LongDatePattern:"l, F d, Y",FullDateTimePattern:"l, F d, Y g:i:s A",MonthDayPattern:"F d",ShortTimePattern:"g:i A",LongTimePattern:"g:i:s A",SortableDateTimePattern:"Y-m-d\\TH:i:s",UniversalSortableDateTimePattern:"Y-m-d H:i:sO",YearMonthPattern:"F, Y"};
+
+//https://github.com/brandonaaron/jquery-mousewheel/blob/master/jquery.mousewheel.js
+/*
+ * Copyright (c) 2013 Brandon Aaron (http://brandonaaron.net)
+ *
+ * Licensed under the MIT License (LICENSE.txt).
+ *
+ * Thanks to: http://adomas.org/javascript-mouse-wheel/ for some pointers.
+ * Thanks to: Mathias Bank(http://www.mathias-bank.de) for a scope bug fix.
+ * Thanks to: Seamus Leahy for adding deltaX and deltaY
+ *
+ * Version: 3.1.3
+ *
+ * Requires: 1.2.2+
+ */
+(function(factory) {if(typeof define==='function'&&define.amd) {define(['jquery'],factory)}else if(typeof exports==='object') {module.exports=factory}else{factory(jQuery)}}(function($) {var toFix=['wheel','mousewheel','DOMMouseScroll','MozMousePixelScroll'];var toBind='onwheel'in document||document.documentMode>=9?['wheel']:['mousewheel','DomMouseScroll','MozMousePixelScroll'];var lowestDelta,lowestDeltaXY;if($.event.fixHooks) {for(var i=toFix.length;i;) {$.event.fixHooks[toFix[--i]]=$.event.mouseHooks}}$.event.special.mousewheel={setup:function() {if(this.addEventListener) {for(var i=toBind.length;i;) {this.addEventListener(toBind[--i],handler,false)}}else{this.onmousewheel=handler}},teardown:function() {if(this.removeEventListener) {for(var i=toBind.length;i;) {this.removeEventListener(toBind[--i],handler,false)}}else{this.onmousewheel=null}}};$.fn.extend({mousewheel:function(fn) {return fn?this.bind("mousewheel",fn):this.trigger("mousewheel")},unmousewheel:function(fn) {return this.unbind("mousewheel",fn)}});function handler(event) {var orgEvent=event||window.event,args=[].slice.call(arguments,1),delta=0,deltaX=0,deltaY=0,absDelta=0,absDeltaXY=0,fn;event=$.event.fix(orgEvent);event.type="mousewheel";if(orgEvent.wheelDelta) {delta=orgEvent.wheelDelta}if(orgEvent.detail) {delta=orgEvent.detail*-1}if(orgEvent.deltaY) {deltaY=orgEvent.deltaY*-1;delta=deltaY}if(orgEvent.deltaX) {deltaX=orgEvent.deltaX;delta=deltaX*-1}if(orgEvent.wheelDeltaY!==undefined) {deltaY=orgEvent.wheelDeltaY}if(orgEvent.wheelDeltaX!==undefined) {deltaX=orgEvent.wheelDeltaX*-1}absDelta=Math.abs(delta);if(!lowestDelta||absDelta<lowestDelta) {lowestDelta=absDelta}absDeltaXY=Math.max(Math.abs(deltaY),Math.abs(deltaX));if(!lowestDeltaXY||absDeltaXY<lowestDeltaXY) {lowestDeltaXY=absDeltaXY}fn=delta>0?'floor':'ceil';delta=Math[fn](delta/lowestDelta);deltaX=Math[fn](deltaX/lowestDeltaXY);deltaY=Math[fn](deltaY/lowestDeltaXY);args.unshift(event,delta,deltaX,deltaY);return($.event.dispatch||$.event.handle).apply(this,args)}}));
+;/*
+* EASYDROPDOWN - A Drop-down Builder for Styleable Inputs and Menus
+* Version: 2.1.4
+* License: Creative Commons Attribution 3.0 Unported - CC BY 3.0
+* http://creativecommons.org/licenses/by/3.0/
+* This software may be used freely on commercial and non-commercial projects with attribution to the author/copyright holder.
+* Author: Patrick Kunka
+* Copyright 2013 Patrick Kunka, All Rights Reserved
+*/
+
+
+(function($){
+	
+	function EasyDropDown(){
+		this.isField = true,
+		this.down = false,
+		this.inFocus = false,
+		this.disabled = false,
+		this.cutOff = false,
+		this.hasLabel = false,
+		this.keyboardMode = false,
+		this.nativeTouch = true,
+		this.wrapperClass = 'dropdown',
+		this.onChange = null;
+	};
+	
+	EasyDropDown.prototype = {
+		constructor: EasyDropDown,
+		instances: {},
+		init: function(domNode, settings){
+			var	self = this;
+			
+			$.extend(self, settings);
+			self.$select = $(domNode);
+			self.id = domNode.id;
+			self.options = [];
+			self.$options = self.$select.find('option');
+			self.isTouch = 'ontouchend' in document;
+			self.$select.removeClass(self.wrapperClass+' dropdown');
+			if(self.$select.is(':disabled')){
+				self.disabled = true;
+			};
+			if(self.$options.length){
+				self.$options.each(function(i){
+					var $option = $(this);
+					if($option.is(':selected')){
+						self.selected = {
+							index: i,
+							title: $option.text()
+						}
+						self.focusIndex = i;
+					};
+					if($option.hasClass('label') && i == 0){
+						self.hasLabel = true;
+						self.label = $option.text();
+						$option.attr('value','');
+					} else {
+						self.options.push({
+							domNode: $option[0],
+							title: $option.text(),
+							value: $option.val(),
+							selected: $option.is(':selected')
+						});
+					};
+				});
+				if(!self.selected){
+					self.selected = {
+						index: 0,
+						title: self.$options.eq(0).text()
+					}
+					self.focusIndex = 0;
+				};
+				self.render();
+			};
+		},
+	
+		render: function(){
+			var	self = this,
+				touchClass = self.isTouch && self.nativeTouch ? ' touch' : '',
+				disabledClass = self.disabled ? ' disabled' : '';
+			
+			self.$container = self.$select.wrap('<div class="'+self.wrapperClass+touchClass+disabledClass+'"><span class="old"/></div>').parent().parent();
+			self.$active = $('<span class="selected">'+self.selected.title+'</span>').appendTo(self.$container);
+			self.$carat = $('<span class="carat"/>').appendTo(self.$container);
+			self.$scrollWrapper = $('<div><ul/></div>').appendTo(self.$container);
+			self.$dropDown = self.$scrollWrapper.find('ul');
+			self.$form = self.$container.closest('form');
+			$.each(self.options, function(){
+				var	option = this,
+					active = option.selected ? ' class="active"':'';
+				self.$dropDown.append('<li'+active+'>'+option.title+'</li>');
+			});
+			self.$items = self.$dropDown.find('li');
+			
+			if(self.cutOff && self.$items.length > self.cutOff)self.$container.addClass('scrollable');
+			
+			self.getMaxHeight();
+	
+			if(self.isTouch && self.nativeTouch){
+				self.bindTouchHandlers();
+			} else {
+				self.bindHandlers();
+			};
+		},
+		
+		getMaxHeight: function(){
+			var self = this;
+			
+			self.maxHeight = 0;
+			
+			for(i = 0; i < self.$items.length; i++){
+				var $item = self.$items.eq(i);
+				self.maxHeight += $item.outerHeight();
+				if(self.cutOff == i+1){
+					break;
+				};
+			};
+		},
+		
+		bindTouchHandlers: function(){
+			var	self = this;
+			self.$container.on('click.easyDropDown',function(){
+				self.$select.focus();
+			});
+			self.$select.on({
+				change: function(){
+					var	$selected = $(this).find('option:selected'),
+						title = $selected.text(),
+						value = $selected.val();
+						
+					self.$active.text(title);
+					if(typeof self.onChange === 'function'){
+						self.onChange.call(self.$select[0],{
+							title: title, 
+							value: value
+						});
+					};
+				},
+				focus: function(){
+					self.$container.addClass('focus');
+				},
+				blur: function(){
+					self.$container.removeClass('focus');
+				}
+			});
+		},
+	
+		bindHandlers: function(){
+			var	self = this;
+			self.query = '';
+			self.$container.on({
+				'click.easyDropDown': function(){
+					if(!self.down && !self.disabled){
+						self.open();
+					} else {
+						self.close();
+					};
+				},
+				'mousemove.easyDropDown': function(){
+					if(self.keyboardMode){
+						self.keyboardMode = false;
+					};
+				}
+			});
+			
+			$('body').on('click.easyDropDown.'+self.id,function(e){
+				var $target = $(e.target),
+					classNames = self.wrapperClass.split(' ').join('.');
+
+				if(!$target.closest('.'+classNames).length && self.down){
+					self.close();
+				};
+			});
+
+			self.$items.on({
+				'click.easyDropDown': function(){
+					var index = $(this).index();
+					self.select(index);
+					self.$select.focus();
+				},
+				'mouseover.easyDropDown': function(){
+					if(!self.keyboardMode){
+						var $t = $(this);
+						$t.addClass('focus').siblings().removeClass('focus');
+						self.focusIndex = $t.index();
+					};
+				},
+				'mouseout.easyDropDown': function(){
+					if(!self.keyboardMode){
+						$(this).removeClass('focus');
+					};
+				}
+			});
+
+			self.$select.on({
+				'focus.easyDropDown': function(){
+					self.$container.addClass('focus');
+					self.inFocus = true;
+				},
+				'blur.easyDropDown': function(){
+					self.$container.removeClass('focus');
+					self.inFocus = false;
+				},
+				'keydown.easyDropDown': function(e){
+					if(self.inFocus){
+						self.keyboardMode = true;
+						var key = e.keyCode;
+
+						if(key == 38 || key == 40 || key == 32){
+							e.preventDefault();
+							if(key == 38){
+								self.focusIndex--
+								self.focusIndex = self.focusIndex < 0 ? self.$items.length - 1 : self.focusIndex;
+							} else if(key == 40){
+								self.focusIndex++
+								self.focusIndex = self.focusIndex > self.$items.length - 1 ? 0 : self.focusIndex;
+							};
+							if(!self.down){
+								self.open();
+							};
+							self.$items.removeClass('focus').eq(self.focusIndex).addClass('focus');
+							if(self.cutOff){
+								self.scrollToView();
+							};
+							self.query = '';
+						};
+						if(self.down){
+							if(key == 9 || key == 27){
+								self.close();
+							} else if(key == 13){
+								e.preventDefault();
+								self.select(self.focusIndex);
+								self.close();
+								return false;
+							} else if(key == 8){
+								e.preventDefault();
+								self.query = self.query.slice(0,-1);
+								self.search();
+								clearTimeout(self.resetQuery);
+								return false;
+							} else if(key != 38 && key != 40){
+								var letter = String.fromCharCode(key);
+								self.query += letter;
+								self.search();
+								clearTimeout(self.resetQuery);
+							};
+						};
+					};
+				},
+				'keyup.easyDropDown': function(){
+					self.resetQuery = setTimeout(function(){
+						self.query = '';
+					},1200);
+				}
+			});
+			
+			self.$dropDown.on('scroll.easyDropDown',function(e){
+				if(self.$dropDown[0].scrollTop >= self.$dropDown[0].scrollHeight - self.maxHeight){
+					self.$container.addClass('bottom');
+				} else {
+					self.$container.removeClass('bottom');
+				};
+			});
+			
+			if(self.$form.length){
+				self.$form.on('reset.easyDropDown', function(){
+					var active = self.hasLabel ? self.label : self.options[0].title;
+					self.$active.text(active);
+				});
+			};
+		},
+		
+		unbindHandlers: function(){
+			var self = this;
+			
+			self.$container
+				.add(self.$select)
+				.add(self.$items)
+				.add(self.$form)
+				.add(self.$dropDown)
+				.off('.easyDropDown');
+			$('body').off('.'+self.id);
+		},
+		
+		open: function(){
+			var self = this,
+				scrollTop = window.scrollY || document.documentElement.scrollTop,
+				scrollLeft = window.scrollX || document.documentElement.scrollLeft,
+				scrollOffset = self.notInViewport(scrollTop);
+
+			self.closeAll();
+			self.getMaxHeight();
+			self.$select.focus();
+			window.scrollTo(scrollLeft, scrollTop+scrollOffset);
+			self.$container.addClass('open');
+			self.$scrollWrapper.css('height',self.maxHeight+'px');
+			self.down = true;
+		},
+		
+		close: function(){
+			var self = this;
+			self.$container.removeClass('open');
+			self.$scrollWrapper.css('height','0px');
+			self.focusIndex = self.selected.index;
+			self.query = '';
+			self.down = false;
+		},
+		
+		closeAll: function(){
+			var self = this,
+				instances = Object.getPrototypeOf(self).instances;
+			for(var key in instances){
+				var instance = instances[key];
+				instance.close();
+			};
+		},
+	
+		select: function(index){
+			var self = this;
+			
+			if(typeof index === 'string'){
+				index = self.$select.find('option[value='+index+']').index() - 1;
+			};
+			
+			var	option = self.options[index],
+				selectIndex = self.hasLabel ? index + 1 : index;
+			self.$items.removeClass('active').eq(index).addClass('active');
+			self.$active.text(option.title);
+			self.$select
+				.find('option')
+				.removeAttr('selected')
+				.eq(selectIndex)
+				.prop('selected',true)
+				.parent()
+				.trigger('change');
+				
+			self.selected = {
+				index: index,
+				title: option.title
+			};
+			self.focusIndex = i;
+			if(typeof self.onChange === 'function'){
+				self.onChange.call(self.$select[0],{
+					title: option.title, 
+					value: option.value
+				});
+			};
+		},
+		
+		search: function(){
+			var self = this,
+				lock = function(i){
+					self.focusIndex = i;
+					self.$items.removeClass('focus').eq(self.focusIndex).addClass('focus');
+					self.scrollToView();	
+				},
+				getTitle = function(i){
+					return self.options[i].title.toUpperCase();
+				};
+				
+			for(i = 0; i < self.options.length; i++){
+				var title = getTitle(i);
+				if(title.indexOf(self.query) == 0){
+					lock(i);
+					return;
+				};
+			};
+			
+			for(i = 0; i < self.options.length; i++){
+				var title = getTitle(i);
+				if(title.indexOf(self.query) > -1){
+					lock(i);
+					break;
+				};
+			};
+		},
+		
+		scrollToView: function(){
+			var self = this;
+			if(self.focusIndex >= self.cutOff){
+				var $focusItem = self.$items.eq(self.focusIndex),
+					scroll = ($focusItem.outerHeight() * (self.focusIndex + 1)) - self.maxHeight;
+			
+				self.$dropDown.scrollTop(scroll);
+			};
+		},
+		
+		notInViewport: function(scrollTop){
+			var self = this,
+				range = {
+					min: scrollTop,
+					max: scrollTop + (window.innerHeight || document.documentElement.clientHeight)
+				},
+				menuBottom = self.$dropDown.offset().top + self.maxHeight;
+				
+			if(menuBottom >= range.min && menuBottom <= range.max){
+				return 0;
+			} else {
+				return (menuBottom - range.max) + 5;
+			};
+		},
+		
+		destroy: function(){
+			var self = this;
+			self.unbindHandlers();
+			self.$select.unwrap().siblings().remove();
+			self.$select.unwrap();
+			delete Object.getPrototypeOf(self).instances[self.$select[0].id];
+		},
+		
+		disable: function(){
+			var self = this;
+			self.disabled = true;
+			self.$container.addClass('disabled');
+			self.$select.attr('disabled',true);
+			if(!self.down)self.close();
+		},
+		
+		enable: function(){
+			var self = this;
+			self.disabled = false;
+			self.$container.removeClass('disabled');
+			self.$select.attr('disabled',false);
+		}
+	};
+	
+	var instantiate = function(domNode, settings){
+			domNode.id = !domNode.id ? 'EasyDropDown'+rand() : domNode.id;
+			var instance = new EasyDropDown();
+			if(!instance.instances[domNode.id]){
+				instance.instances[domNode.id] = instance;
+				instance.init(domNode, settings);
+			};
+		},
+		rand = function(){
+			return ('00000'+(Math.random()*16777216<<0).toString(16)).substr(-6).toUpperCase();
+		};
+	
+	$.fn.easyDropDown = function(){
+		var args = arguments,
+			dataReturn = [],
+			eachReturn;
+			
+		eachReturn = this.each(function(){
+			if(args && typeof args[0] === 'string'){
+				var data = EasyDropDown.prototype.instances[this.id][args[0]](args[1], args[2]);
+				if(data)dataReturn.push(data);
+			} else {
+				instantiate(this, args[0]);
+			};
+		});
+		
+		if(dataReturn.length){
+			return dataReturn.length > 1 ? dataReturn : dataReturn[0];
+		} else {
+			return eachReturn;
+		};
+	};
+	
+	$(function(){
+		if(typeof Object.getPrototypeOf !== 'function'){
+			if(typeof 'test'.__proto__ === 'object'){
+				Object.getPrototypeOf = function(object){
+					return object.__proto__;
+				};
+			} else {
+				Object.getPrototypeOf = function(object){
+					return object.constructor.prototype;
+				};
+			};
+		};
+		
+		$('select.dropdown').each(function(){
+			var json = $(this).attr('data-settings');
+				settings = json ? $.parseJSON(json) : {}; 
+			instantiate(this, settings);
+		});
+	});
 })(jQuery);;/**
 * jQuery Form Validator
 * ------------------------------------------
@@ -11563,3 +13026,808 @@ $.fn.extend({
     });
 
 })(jQuery);
+;(function ($) {
+  $.fn.extend({
+    leanModal: function (options) {
+      var defaults = {
+          top: 100,
+          overlay: 0.5,
+          closeButton: null
+        },
+        overlay = $('<div id="overlay"></div>'),
+        closeModal = function (modalID) {
+          $('#overlay').fadeOut(200);
+          $(modalID).css({ 'display' : 'none' });
+        };
+
+      $('BODY').append(overlay);
+
+      options =  $.extend(defaults, options);
+
+      return this.each(function () {
+
+        var o = options;
+
+        $(this).click(function (e) {
+          var modalID = $(this).attr('href'),
+            modalHeight = $(modalID).outerHeight(),
+            modalWidth = $(modalID).outerWidth();
+
+          $('#overlay').click(function () {
+            closeModal(modalID);
+          });
+          $(o.closeButton).click(function () {
+            closeModal(modalID);
+          });
+          // Esc key handle;
+          $(document).keyup(function (e) {
+            if (e.keyCode === 27) {
+              closeModal(modalID);
+            }
+          });
+
+          $('#overlay').css({ 'display' : 'block', opacity : 0 });
+          $('#overlay').fadeTo(200, o.overlay);
+
+          $(modalID).css({
+            display: 'block',
+            position: 'fixed',
+            opacity: 0,
+            zIndex: 9999,
+            top: (typeof o.top === 'string') ? o.top : o.top + 'px',
+            left: 50 + '%',
+            marginLeft: -(modalWidth / 2) + 'px',
+            marginTop: -(modalHeight / 2) + 'px'
+          });
+
+          $(modalID).fadeTo(200, 1);
+
+          e.preventDefault();
+        });
+      });
+    }
+  });
+}(jQuery));;/*
+	Masked Input plugin for jQuery
+	Copyright (c) 2007-2013 Josh Bush (digitalbush.com)
+	Licensed under the MIT license (http://digitalbush.com/projects/masked-input-plugin/#license)
+	Version: 1.3.1
+*/
+(function($) {
+	function getPasteEvent() {
+    var el = document.createElement('input'),
+        name = 'onpaste';
+    el.setAttribute(name, '');
+    return (typeof el[name] === 'function')?'paste':'input';             
+}
+
+var pasteEventName = getPasteEvent() + ".mask",
+	ua = navigator.userAgent,
+	iPhone = /iphone/i.test(ua),
+	android=/android/i.test(ua),
+	caretTimeoutId;
+
+$.mask = {
+	//Predefined character definitions
+	definitions: {
+		'9': "[0-9]",
+		'a': "[A-Za-z]",
+		'*': "[A-Za-z0-9]"
+	},
+	dataName: "rawMaskFn",
+	placeholder: '_',
+};
+
+$.fn.extend({
+	//Helper Function for Caret positioning
+	caret: function(begin, end) {
+		var range;
+
+		if (this.length === 0 || this.is(":hidden")) {
+			return;
+		}
+
+		if (typeof begin == 'number') {
+			end = (typeof end === 'number') ? end : begin;
+			return this.each(function() {
+				if (this.setSelectionRange) {
+					this.setSelectionRange(begin, end);
+				} else if (this.createTextRange) {
+					range = this.createTextRange();
+					range.collapse(true);
+					range.moveEnd('character', end);
+					range.moveStart('character', begin);
+					range.select();
+				}
+			});
+		} else {
+			if (this[0].setSelectionRange) {
+				begin = this[0].selectionStart;
+				end = this[0].selectionEnd;
+			} else if (document.selection && document.selection.createRange) {
+				range = document.selection.createRange();
+				begin = 0 - range.duplicate().moveStart('character', -100000);
+				end = begin + range.text.length;
+			}
+			return { begin: begin, end: end };
+		}
+	},
+	unmask: function() {
+		return this.trigger("unmask");
+	},
+	mask: function(mask, settings) {
+		var input,
+			defs,
+			tests,
+			partialPosition,
+			firstNonMaskPos,
+			len;
+
+		if (!mask && this.length > 0) {
+			input = $(this[0]);
+			return input.data($.mask.dataName)();
+		}
+		settings = $.extend({
+			placeholder: $.mask.placeholder, // Load default placeholder
+			completed: null
+		}, settings);
+
+
+		defs = $.mask.definitions;
+		tests = [];
+		partialPosition = len = mask.length;
+		firstNonMaskPos = null;
+
+		$.each(mask.split(""), function(i, c) {
+			if (c == '?') {
+				len--;
+				partialPosition = i;
+			} else if (defs[c]) {
+				tests.push(new RegExp(defs[c]));
+				if (firstNonMaskPos === null) {
+					firstNonMaskPos = tests.length - 1;
+				}
+			} else {
+				tests.push(null);
+			}
+		});
+
+		return this.trigger("unmask").each(function() {
+			var input = $(this),
+				buffer = $.map(
+				mask.split(""),
+				function(c, i) {
+					if (c != '?') {
+						return defs[c] ? settings.placeholder : c;
+					}
+				}),
+				focusText = input.val();
+
+			function seekNext(pos) {
+				while (++pos < len && !tests[pos]);
+				return pos;
+			}
+
+			function seekPrev(pos) {
+				while (--pos >= 0 && !tests[pos]);
+				return pos;
+			}
+
+			function shiftL(begin,end) {
+				var i,
+					j;
+
+				if (begin<0) {
+					return;
+				}
+
+				for (i = begin, j = seekNext(end); i < len; i++) {
+					if (tests[i]) {
+						if (j < len && tests[i].test(buffer[j])) {
+							buffer[i] = buffer[j];
+							buffer[j] = settings.placeholder;
+						} else {
+							break;
+						}
+
+						j = seekNext(j);
+					}
+				}
+				writeBuffer();
+				input.caret(Math.max(firstNonMaskPos, begin));
+			}
+
+			function shiftR(pos) {
+				var i,
+					c,
+					j,
+					t;
+
+				for (i = pos, c = settings.placeholder; i < len; i++) {
+					if (tests[i]) {
+						j = seekNext(i);
+						t = buffer[i];
+						buffer[i] = c;
+						if (j < len && tests[j].test(t)) {
+							c = t;
+						} else {
+							break;
+						}
+					}
+				}
+			}
+
+			function keydownEvent(e) {
+				var k = e.which,
+					pos,
+					begin,
+					end;
+
+				//backspace, delete, and escape get special treatment
+				if (k === 8 || k === 46 || (iPhone && k === 127)) {
+					pos = input.caret();
+					begin = pos.begin;
+					end = pos.end;
+
+					if (end - begin === 0) {
+						begin=k!==46?seekPrev(begin):(end=seekNext(begin-1));
+						end=k===46?seekNext(end):end;
+					}
+					clearBuffer(begin, end);
+					shiftL(begin, end - 1);
+
+					e.preventDefault();
+				} else if (k == 27) {//escape
+					input.val(focusText);
+					input.caret(0, checkVal());
+					e.preventDefault();
+				}
+			}
+
+			function keypressEvent(e) {
+				var k = e.which,
+					pos = input.caret(),
+					p,
+					c,
+					next;
+
+				if (e.ctrlKey || e.altKey || e.metaKey || k < 32) {//Ignore
+					return;
+				} else if (k) {
+					if (pos.end - pos.begin !== 0){
+						clearBuffer(pos.begin, pos.end);
+						shiftL(pos.begin, pos.end-1);
+					}
+					p = seekNext(pos.begin - 1);
+					if (p < len) {
+						c = String.fromCharCode(k);
+						if (tests[p].test(c)) {
+							shiftR(p);
+
+							buffer[p] = c;
+							writeBuffer();
+							next = seekNext(p);
+							if(android){
+								setTimeout($.proxy($.fn.caret,input,next),0);
+							}else{
+
+								input.caret(next);
+							}
+
+							if (settings.completed && next >= len) {
+								settings.completed.call(input);
+							}
+						}
+					}
+					e.preventDefault();
+				}
+			}
+
+			function clearBuffer(start, end) {
+				var i;
+				for (i = start; i < end && i < len; i++) {
+					if (tests[i]) {
+						buffer[i] = settings.placeholder;
+					}
+				}
+			}
+
+			function writeBuffer() { input.val(buffer.join('')); }
+
+			function checkVal(allow) {
+				//try to place characters where they belong
+				var test = input.val(),
+					lastMatch = -1,
+					i,
+					c;
+
+				for (i = 0, pos = 0; i < len; i++) {
+					if (tests[i]) {
+						buffer[i] = settings.placeholder;
+						while (pos++ < test.length) {
+							c = test.charAt(pos - 1);
+							if (tests[i].test(c)) {
+								buffer[i] = c;
+								lastMatch = i;
+								break;
+							}
+						}
+						if (pos > test.length) {
+							break;
+						}
+					} else if (buffer[i] === test.charAt(pos) && i !== partialPosition) {
+						pos++;
+						lastMatch = i;
+					}
+				}
+				if (allow) {
+					writeBuffer();
+				} else if (lastMatch + 1 < partialPosition) {
+					input.val("");
+					//clearBuffer(0, len);
+				} else {
+					writeBuffer();
+					input.val(input.val().substring(0, lastMatch + 1));
+				}
+				return (partialPosition ? i : firstNonMaskPos);
+			}
+
+			input.data($.mask.dataName,function(){
+				return $.map(buffer, function(c, i) {
+					return tests[i]&&c!=settings.placeholder ? c : null;
+				}).join('');
+			});
+
+			if (!input.attr("readonly"))
+				input
+				.one("unmask", function() {
+					input
+						.unbind(".mask")
+						.removeData($.mask.dataName);
+				})
+				.bind("focus.mask", function() {
+					clearTimeout(caretTimeoutId);
+					var pos,
+						moveCaret;
+
+					focusText = input.val();
+          input.data('cache',focusText);
+					pos = checkVal();
+					
+					caretTimeoutId = setTimeout(function(){
+						writeBuffer();
+						if (pos == mask.length) {
+							input.caret(0, pos);
+						} else {
+              if(input.data('cache') !== ""){
+                input.val(input.data('cache'));
+              }
+              input.caret(pos);
+						}
+					}, 10);
+				})
+				.bind("blur.mask", function() {
+
+				})
+				.bind("keydown.mask", keydownEvent)
+				.bind("keypress.mask", keypressEvent)
+				.bind(pasteEventName, function() {
+					setTimeout(function() { 
+						var pos=checkVal(true);
+						input.caret(pos); 
+						if (settings.completed && pos == input.val().length)
+							settings.completed.call(input);
+					}, 0);
+				});
+			checkVal(); //Perform initial check for existing values
+		});
+	}
+});
+
+
+})(jQuery);;/*! http://mths.be/placeholder v2.0.7 by @mathias */
+;(function(window, document, $) {
+
+	var isInputSupported = 'placeholder' in document.createElement('input'),
+	    isTextareaSupported = 'placeholder' in document.createElement('textarea'),
+	    prototype = $.fn,
+	    valHooks = $.valHooks,
+	    hooks,
+	    placeholder;
+
+	if (isInputSupported && isTextareaSupported) {
+
+		placeholder = prototype.placeholder = function() {
+			return this;
+		};
+
+		placeholder.input = placeholder.textarea = true;
+
+	} else {
+
+		placeholder = prototype.placeholder = function() {
+			var $this = this;
+			$this
+				.filter((isInputSupported ? 'textarea' : ':input') + '[placeholder]')
+				.not('.placeholder')
+				.bind({
+					'focus.placeholder': clearPlaceholder,
+					'blur.placeholder': setPlaceholder
+				})
+				.data('placeholder-enabled', true)
+				.trigger('blur.placeholder');
+			return $this;
+		};
+
+		placeholder.input = isInputSupported;
+		placeholder.textarea = isTextareaSupported;
+
+		hooks = {
+			'get': function(element) {
+				var $element = $(element);
+				return $element.data('placeholder-enabled') && $element.hasClass('placeholder') ? '' : element.value;
+			},
+			'set': function(element, value) {
+				var $element = $(element);
+				if (!$element.data('placeholder-enabled')) {
+					return element.value = value;
+				}
+				if (value == '') {
+					element.value = value;
+					// Issue #56: Setting the placeholder causes problems if the element continues to have focus.
+					if (element != document.activeElement) {
+						// We can't use `triggerHandler` here because of dummy text/password inputs :(
+						setPlaceholder.call(element);
+					}
+				} else if ($element.hasClass('placeholder')) {
+					clearPlaceholder.call(element, true, value) || (element.value = value);
+				} else {
+					element.value = value;
+				}
+				// `set` can not return `undefined`; see http://jsapi.info/jquery/1.7.1/val#L2363
+				return $element;
+			}
+		};
+
+		isInputSupported || (valHooks.input = hooks);
+		isTextareaSupported || (valHooks.textarea = hooks);
+
+		$(function() {
+			// Look for forms
+			$(document).delegate('form', 'submit.placeholder', function() {
+				// Clear the placeholder values so they don't get submitted
+				var $inputs = $('.placeholder', this).each(clearPlaceholder);
+				setTimeout(function() {
+					$inputs.each(setPlaceholder);
+				}, 10);
+			});
+		});
+
+		// Clear placeholder values upon page reload
+		$(window).bind('beforeunload.placeholder', function() {
+			$('.placeholder').each(function() {
+				this.value = '';
+			});
+		});
+
+	}
+
+	function args(elem) {
+		// Return an object of element attributes
+		var newAttrs = {},
+		    rinlinejQuery = /^jQuery\d+$/;
+		$.each(elem.attributes, function(i, attr) {
+			if (attr.specified && !rinlinejQuery.test(attr.name)) {
+				newAttrs[attr.name] = attr.value;
+			}
+		});
+		return newAttrs;
+	}
+
+	function clearPlaceholder(event, value) {
+		var input = this,
+		    $input = $(input);
+		if (input.value == $input.attr('placeholder') && $input.hasClass('placeholder')) {
+			if ($input.data('placeholder-password')) {
+				$input = $input.hide().next().show().attr('id', $input.removeAttr('id').data('placeholder-id'));
+				// If `clearPlaceholder` was called from `$.valHooks.input.set`
+				if (event === true) {
+					return $input[0].value = value;
+				}
+				$input.focus();
+			} else {
+				input.value = '';
+				$input.removeClass('placeholder');
+				input == document.activeElement && input.select();
+			}
+		}
+	}
+
+	function setPlaceholder() {
+		var $replacement,
+		    input = this,
+		    $input = $(input),
+		    $origInput = $input,
+		    id = this.id;
+		if (input.value == '') {
+			if (input.type == 'password') {
+				if (!$input.data('placeholder-textinput')) {
+					try {
+						$replacement = $input.clone().attr({ 'type': 'text' });
+					} catch(e) {
+						$replacement = $('<input>').attr($.extend(args(this), { 'type': 'text' }));
+					}
+					$replacement
+						.removeAttr('name')
+						.data({
+							'placeholder-password': true,
+							'placeholder-id': id
+						})
+						.bind('focus.placeholder', clearPlaceholder);
+					$input
+						.data({
+							'placeholder-textinput': $replacement,
+							'placeholder-id': id
+						})
+						.before($replacement);
+				}
+				$input = $input.removeAttr('id').hide().prev().attr('id', id).show();
+				// Note: `$input[0] != input` now!
+			}
+			$input.addClass('placeholder');
+			$input[0].value = $input.attr('placeholder');
+		} else {
+			$input.removeClass('placeholder');
+		}
+	}
+
+}(this, document, jQuery));;/* =============================================================
+ * flatui-checkbox v0.0.3
+ * ============================================================ */
+ 
+!function ($) {
+
+ /* CHECKBOX PUBLIC CLASS DEFINITION
+  * ============================== */
+
+  var Checkbox = function (element, options) {
+    this.init(element, options);
+  }
+
+  Checkbox.prototype = {
+    
+    constructor: Checkbox
+    
+  , init: function (element, options) {      
+    var $el = this.$element = $(element)
+    
+    this.options = $.extend({}, $.fn.checkbox.defaults, options);      
+    $el.before(this.options.template);    
+    this.setState(); 
+  }  
+   
+  , setState: function () {    
+      var $el = this.$element
+        , $parent = $el.closest('.checkbox');
+        
+        $el.prop('disabled') && $parent.addClass('disabled');   
+        $el.prop('checked') && $parent.addClass('checked');
+    }  
+    
+  , toggle: function () {    
+      var ch = 'checked'
+        , $el = this.$element
+        , $parent = $el.closest('.checkbox')
+        , checked = $el.prop(ch)
+        , e = $.Event('toggle')
+      
+      if ($el.prop('disabled') == false) {
+        $parent.toggleClass(ch) && checked ? $el.removeAttr(ch) : $el.prop(ch, ch);
+        $el.trigger(e).trigger('change'); 
+      }
+    }  
+    
+  , setCheck: function (option) {    
+      var d = 'disabled'
+        , ch = 'checked'
+        , $el = this.$element
+        , $parent = $el.closest('.checkbox')
+        , checkAction = option == 'check' ? true : false
+        , e = $.Event(option)
+      
+      $parent[checkAction ? 'addClass' : 'removeClass' ](ch) && checkAction ? $el.prop(ch, ch) : $el.removeAttr(ch);
+      $el.trigger(e).trigger('change');       
+    }  
+      
+  }
+
+
+ /* CHECKBOX PLUGIN DEFINITION
+  * ======================== */
+
+  var old = $.fn.checkbox
+
+  $.fn.checkbox = function (option) {
+    return this.each(function () {
+      var $this = $(this)
+        , data = $this.data('checkbox')
+        , options = $.extend({}, $.fn.checkbox.defaults, $this.data(), typeof option == 'object' && option);
+      if (!data) $this.data('checkbox', (data = new Checkbox(this, options)));
+      if (option == 'toggle') data.toggle()
+      if (option == 'check' || option == 'uncheck') data.setCheck(option)
+      else if (option) data.setState(); 
+    });
+  }
+  
+  $.fn.checkbox.defaults = {
+    template: '<span class="icons"><span class="first-icon fui-checkbox-unchecked"></span><span class="second-icon fui-checkbox-checked"></span></span>'
+  }
+
+
+ /* CHECKBOX NO CONFLICT
+  * ================== */
+
+  $.fn.checkbox.noConflict = function () {
+    $.fn.checkbox = old;
+    return this;
+  }
+
+
+ /* CHECKBOX DATA-API
+  * =============== */
+
+  $(document).on('click.checkbox.data-api', '[data-toggle^=checkbox], .checkbox', function (e) {
+    var $checkbox = $(e.target);
+    if (e.target.tagName != "A") {      
+      e && e.preventDefault() && e.stopPropagation();
+      if (!$checkbox.hasClass('checkbox')) $checkbox = $checkbox.closest('.checkbox');
+      $checkbox.find(':checkbox').checkbox('toggle');
+    }
+  });
+  
+  $(function () {
+    $('[data-toggle="checkbox"]').each(function () {
+      var $checkbox = $(this);
+      $checkbox.checkbox();
+    });
+  });
+
+}(window.jQuery);;/* =============================================================
+ * flatui-radio v0.0.3
+ * ============================================================ */
+
+!function ($) {
+
+ /* RADIO PUBLIC CLASS DEFINITION
+  * ============================== */
+
+  var Radio = function (element, options) {
+    this.init(element, options);
+  }
+
+  Radio.prototype = {
+  
+    constructor: Radio
+    
+  , init: function (element, options) {      
+      var $el = this.$element = $(element)
+      
+      this.options = $.extend({}, $.fn.radio.defaults, options);      
+      $el.before(this.options.template);    
+      this.setState();
+    }   
+    
+  , setState: function () {    
+      var $el = this.$element
+        , $parent = $el.closest('.radio');
+        
+        $el.prop('disabled') && $parent.addClass('disabled');   
+        $el.prop('checked') && $parent.addClass('checked');
+    } 
+    
+  , toggle: function () {    
+      var d = 'disabled'
+        , ch = 'checked'
+        , $el = this.$element
+        , checked = $el.prop(ch)
+        , $parent = $el.closest('.radio')      
+        , $parentWrap = $el.closest('form').length ? $el.closest('form') : $el.closest('body')
+        , $elemGroup = $parentWrap.find(':radio[name="' + $el.attr('name') + '"]')
+        , e = $.Event('toggle')
+        
+        $elemGroup.not($el).each(function () {
+          var $el = $(this)
+            , $parent = $(this).closest('.radio');
+            
+            if ($el.prop(d) == false) {
+              $parent.removeClass(ch) && $el.removeAttr(ch).trigger('change');
+            } 
+        });
+      
+        if ($el.prop(d) == false) {
+          if (checked == false) $parent.addClass(ch) && $el.prop(ch, true);
+          $el.trigger(e);
+          
+          if (checked !== $el.prop(ch)) {
+            $el.trigger('change'); 
+          }
+        }               
+    } 
+     
+  , setCheck: function (option) {    
+      var ch = 'checked'
+        , $el = this.$element
+        , $parent = $el.closest('.radio')
+        , checkAction = option == 'check' ? true : false
+        , checked = $el.prop(ch)
+        , $parentWrap = $el.closest('form').length ? $el.closest('form') : $el.closest('body')
+        , $elemGroup = $parentWrap.find(':radio[name="' + $el['attr']('name') + '"]')
+        , e = $.Event(option)
+        
+      $elemGroup.not($el).each(function () {
+        var $el = $(this)
+          , $parent = $(this).closest('.radio');
+          
+          $parent.removeClass(ch) && $el.removeAttr(ch);
+      });
+            
+      $parent[checkAction ? 'addClass' : 'removeClass'](ch) && checkAction ? $el.prop(ch, ch) : $el.removeAttr(ch);
+      $el.trigger(e);  
+          
+      if (checked !== $el.prop(ch)) {
+        $el.trigger('change'); 
+      }
+    }  
+     
+  }
+
+
+ /* RADIO PLUGIN DEFINITION
+  * ======================== */
+
+  var old = $.fn.radio
+
+  $.fn.radio = function (option) {
+    return this.each(function () {
+      var $this = $(this)
+        , data = $this.data('radio')
+        , options = $.extend({}, $.fn.radio.defaults, $this.data(), typeof option == 'object' && option);
+      if (!data) $this.data('radio', (data = new Radio(this, options)));
+      if (option == 'toggle') data.toggle()
+      if (option == 'check' || option == 'uncheck') data.setCheck(option)
+      else if (option) data.setState(); 
+    });
+  }
+  
+  $.fn.radio.defaults = {
+    template: '<span class="icons"><span class="first-icon fui-radio-unchecked"></span><span class="second-icon fui-radio-checked"></span></span>'
+  }
+
+
+ /* RADIO NO CONFLICT
+  * ================== */
+
+  $.fn.radio.noConflict = function () {
+    $.fn.radio = old;
+    return this;
+  }
+
+
+ /* RADIO DATA-API
+  * =============== */
+
+  $(document).on('click.radio.data-api', '[data-toggle^=radio], .radio', function (e) {
+    var $radio = $(e.target);
+    e && e.preventDefault() && e.stopPropagation();
+    if (!$radio.hasClass('radio')) $radio = $radio.closest('.radio');
+    $radio.find(':radio').radio('toggle');
+  });
+  
+  $(function () {
+    $('[data-toggle="radio"]').each(function () {
+      var $radio = $(this);
+      $radio.radio();
+    });
+  });
+
+}(window.jQuery);

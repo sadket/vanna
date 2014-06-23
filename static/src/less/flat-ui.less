@@ -1,0 +1,21 @@
+// Flat UI main stylesheet that aggregates all modules
+
+// Loading custom fonts
+@import url("https://fonts.googleapis.com/_css?family=Lato:400,700,700italic,900,400italic,300");
+//@import "modules/_local-fonts";
+@import "modules/_glyphicons";
+
+// Loading config with variables (changing them leads to changing a color scheme)
+@import "_variables";
+
+// Utility mixins for greater good
+@import "_mixins";
+@import "modules/_scaffolding";
+
+// Modules
+@import "modules/_buttons";
+@import "modules/_forms";
+@import "modules/_checkbox-and-radio";
+@import "modules/_tooltip";
+// Spaces
+@import "_spaces";
