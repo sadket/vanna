@@ -2,17 +2,9 @@ doctype html
 html
   include partials/_head
   body
-    .header
-    .container
-      h1.heading Vanna Assets Map
-      a(href="#fakelink", class="btn btn-block btn-lg btn-primary") Primary Button
-      label(class="checkbox" for="checkbox1")
-        input(type="checkbox" value="" id="checkbox1" data-toggle="checkbox")
-        | Unchecked
-      label(class="checkbox" for="checkbox2")
-        input(type="checkbox" value="" id="checkbox2" data-toggle="checkbox" checked)
-        | Checked
-
-
-    .footer
+    .wrapper
+      include partials/_header
+      .content
+        img(src="images/main-bg.jpg")
+      .footer
     include partials/_scripts

@@ -1,26 +1,75 @@
-@font-face {
-  font-family: 'avanti';
-  src: url('../fonts/.eot');
-  src: url('../fonts/avanti.eot?#iefix') format('embedded-opentype'),
-       url('../fonts/avanti.woff') format('woff'),
-       url('../fonts/avanti.ttf') format('truetype'),
-       url('../fonts/avanti.svg') format('svg');
-  font-weight: normal;
-  font-style: normal;
+*{
+  box-sizing: border-box;
+ -moz-box-sizing: border-box;
+}
+body{
+  margin-top: 0;
 }
 
-
-.container{
-  width: 1000px;
-  margin: 0 auto;
-  height: 200px;
-}
-.heading{
-  text-align: center;
-  color:red;
-  font-family: avanti;
-}
 .radio, .checkbox{
   display: block;
   min-height: 20px;
 }
+.wrapper{
+  position: relative;
+  width: 1020px;
+  margin: 0 auto;
+  box-shadow: 0 0 3px 1px rgba(195,192,192,0.4);
+}
+.header{
+  position: absolute;
+  top: 0;
+  left: 45px;
+  right: 45px;
+  height: 80px;
+  padding: 15px 30px;
+  background: url("../images/header-bg.png") 0 0 repeat-x;
+  box-shadow: 0 0 8px 0 rgba(0,0,0,0.4);
+  border-radius: 3px 3px 3px 3px;
+
+  & .logo{
+    display: block;
+    margin-right: 95px;
+    padding-top: 5px;
+  }
+  & .top-nav{
+    margin-top: 40px;
+    font-size: 0;
+
+    & .top-nav-item{
+        display: inline-block;
+        margin-right: 30px;
+        font-size: 14px;
+        color: #666666;
+        line-height: 1;
+
+        &:hover{
+          color: #00a39b;
+          }
+        &:last-child{
+          margin-right: 0;
+        }
+    }
+
+  }
+
+  .login-link{
+    position: absolute;
+    right: 31px;
+    top: 15px;
+    font-size: 12px;
+    text-decoration: underline;
+    color: #a7a7a7;
+
+    &:before{
+      position: absolute;
+      left: -30px;
+      width: 22px;
+      height: 23px;
+      content: '';
+      background: url("../images/icons.png") 0 0 no-repeat;
+    }
+  }
+}
+
+@import "_helpers";

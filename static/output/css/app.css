@@ -1073,11 +1073,10 @@ you can use the generic selector below, but it's slower:
   border-top-color: #34495e !important;
 }
 body {
-  font-family: "Lato", Helvetica, Arial, sans-serif;
-  font-size: 18px;
+  font-family: "Arial", Helvetica, sans-serif;
+  font-size: 14px;
   line-height: 1.72222;
   color: #34495e;
-  background-color: #ffffff;
 }
 a {
   color: #16a085;
@@ -1095,7 +1094,7 @@ a:focus {
 }
 .btn {
   border: none;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: normal;
   line-height: 1.4;
   border-radius: 4px;
@@ -1428,25 +1427,25 @@ fieldset[disabled] .btn-link:focus {
 }
 .btn-hg {
   padding: 13px 20px;
-  font-size: 22px;
+  font-size: 17px;
   line-height: 1.227;
   border-radius: 6px;
 }
 .btn-lg {
   padding: 10px 19px;
-  font-size: 17px;
+  font-size: 14px;
   line-height: 1.471;
   border-radius: 6px;
 }
 .btn-sm {
   padding: 9px 13px;
-  font-size: 13px;
+  font-size: 10px;
   line-height: 1.385;
   border-radius: 4px;
 }
 .btn-xs {
   padding: 6px 9px;
-  font-size: 12px;
+  font-size: 10px;
   line-height: 1.083;
   border-radius: 3px;
 }
@@ -1462,14 +1461,14 @@ legend {
   display: block;
   width: 100%;
   padding: 0;
-  margin-bottom: 15px;
-  font-size: 24px;
+  margin-bottom: 12px;
+  font-size: 19.2px;
   line-height: inherit;
   color: inherit;
   border-bottom: none;
 }
 textarea {
-  font-size: 20px;
+  font-size: 15px;
   line-height: 24px;
   padding: 5px 11px;
 }
@@ -1478,7 +1477,7 @@ input[type="search"] {
 }
 label {
   font-weight: normal;
-  font-size: 15px;
+  font-size: 12px;
   line-height: 2.4;
 }
 .form-control:-moz-placeholder {
@@ -1500,8 +1499,8 @@ label {
 .form-control {
   border: 2px solid #bdc3c7;
   color: #34495e;
-  font-family: "Lato", Helvetica, Arial, sans-serif;
-  font-size: 15px;
+  font-family: "Arial", Helvetica, sans-serif;
+  font-size: 12px;
   line-height: 1.467;
   padding: 8px 12px;
   height: 42px;
@@ -1541,7 +1540,7 @@ fieldset[disabled] .form-control {
 .input-sm {
   height: 35px;
   padding: 6px 10px;
-  font-size: 13px;
+  font-size: 10px;
   line-height: 1.462;
   border-radius: 6px;
 }
@@ -1556,7 +1555,7 @@ select[multiple].input-sm {
 .input-lg {
   height: 45px;
   padding: 10px 15px;
-  font-size: 17px;
+  font-size: 14px;
   line-height: 1.235;
   border-radius: 6px;
 }
@@ -1571,7 +1570,7 @@ select[multiple].input-lg {
 .input-hg {
   height: 53px;
   padding: 10px 16px;
-  font-size: 22px;
+  font-size: 17px;
   line-height: 1.318;
   border-radius: 6px;
 }
@@ -1704,7 +1703,7 @@ select[multiple].input-hg {
   background-color: #ffffff;
 }
 .help-block {
-  font-size: 15px;
+  font-size: 12px;
   margin-bottom: 5px;
   color: inherit;
 }
@@ -1745,7 +1744,7 @@ select[multiple].input-hg {
   position: relative;
   -webkit-transition: color 0.25s linear;
   transition: color 0.25s linear;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.5;
 }
 .checkbox input,
@@ -1883,7 +1882,7 @@ select[multiple].input-hg {
   margin-top: 10px;
 }
 .tooltip {
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.286;
 }
 .tooltip.in {
@@ -2131,25 +2130,134 @@ select[multiple].input-hg {
   margin-left: 20px;
 }
 
-@font-face {
-  font-family: 'avanti';
-  src: url('../fonts/.eot');
-  src: url('../fonts/avanti.eot?#iefix') format('embedded-opentype'), url('../fonts/avanti.woff') format('woff'), url('../fonts/avanti.ttf') format('truetype'), url('../fonts/avanti.svg') format('svg');
-  font-weight: normal;
-  font-style: normal;
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
-.container {
-  width: 1000px;
-  margin: 0 auto;
-  height: 200px;
-}
-.heading {
-  text-align: center;
-  color: red;
-  font-family: avanti;
+body {
+  margin-top: 0;
 }
 .radio,
 .checkbox {
   display: block;
   min-height: 20px;
+}
+.wrapper {
+  position: relative;
+  width: 1020px;
+  margin: 0 auto;
+  box-shadow: 0 0 3px 1px rgba(195, 192, 192, 0.4);
+}
+.header {
+  position: absolute;
+  top: 0;
+  left: 45px;
+  right: 45px;
+  height: 80px;
+  padding: 15px 30px;
+  background: url("../images/header-bg.png") 0 0 repeat-x;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.4);
+  border-radius: 3px 3px 3px 3px;
+}
+.header .logo {
+  display: block;
+  margin-right: 95px;
+  padding-top: 5px;
+}
+.header .top-nav {
+  margin-top: 40px;
+  font-size: 0;
+}
+.header .top-nav .top-nav-item {
+  display: inline-block;
+  margin-right: 30px;
+  font-size: 14px;
+  color: #666666;
+  line-height: 1;
+}
+.header .top-nav .top-nav-item:hover {
+  color: #00a39b;
+}
+.header .top-nav .top-nav-item:last-child {
+  margin-right: 0;
+}
+.header .login-link {
+  position: absolute;
+  right: 31px;
+  top: 15px;
+  font-size: 12px;
+  text-decoration: underline;
+  color: #a7a7a7;
+}
+.header .login-link:before {
+  position: absolute;
+  left: -30px;
+  width: 22px;
+  height: 23px;
+  content: '';
+  background: url("../images/icons.png") 0 0 no-repeat;
+}
+.ir {
+  background-color: transparent;
+  border: 0;
+  overflow: hidden;
+  *text-indent: -9999px;
+}
+.ir:before {
+  content: "";
+  display: block;
+  width: 0;
+  height: 150%;
+}
+.hidden {
+  display: none !important;
+  visibility: hidden;
+}
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
+.invisible {
+  visibility: hidden;
+}
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table;
+}
+.clearfix:after {
+  clear: both;
+}
+.clearfix {
+  *zoom: 1;
+}
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.i-center {
+  text-align: center;
+}
+.i-left {
+  text-align: left;
+}
+.i-right {
+  text-align: right;
 }
